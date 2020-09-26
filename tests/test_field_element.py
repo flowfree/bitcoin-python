@@ -1,4 +1,5 @@
 import pytest
+
 from bitcoin import FieldElement
 
 
@@ -19,6 +20,7 @@ def test_addition_error():
         a = FieldElement(7, 19)
         b = FieldElement(8, 23)
         c = a+b
+    assert str(e.value) == 'Cannot add two numbers in different fields.'
 
 
 def test_addition():
@@ -39,6 +41,7 @@ def test_substraction_error():
         a = FieldElement(20, 31)
         b = FieldElement(3, 29)
         c = a-b
+    assert str(e.value) == 'Cannot substract two numbers in different fields.'
 
 
 def test_substraction():
@@ -52,3 +55,42 @@ def test_substraction():
         b = FieldElement(y, prime)
         c = FieldElement(z, prime)
         assert a-b == c
+
+
+def test_multiplication_error():
+    with pytest.raises(TypeError) as e:
+        a = FieldElement(2, 7)
+        b = FieldElement(3, 11)
+        c = a*b
+    assert str(e.value) == 'Cannot multiply two numbers in different fields.'
+
+
+def test_multiplications():
+    tests = [
+        (17, 10, 3, 13),
+        (17, 3, 16, 14),
+        (17, 15, 15, 4),
+        (19, 2, 3, 6),
+        (19, 7, 9, 6),
+        (19, 12, 17, 14),
+        (23, 21, 22, 2),
+    ]
+    for prime, x, y, z in tests:
+        a = FieldElement(x, prime)
+        b = FieldElement(y, prime)
+        c = FieldElement(z, prime)
+        assert a*b == c
+
+
+def test_exponentiations():
+    tests = [
+        (13, 3, 3, 1),
+        (13, 4, 5, 10),
+        (13, 2, 7, 11),
+        (17, 15, 7, 8),
+        (17, 13, 15, 4),
+    ]
+    for prime, x, exp, y in tests:
+        a = FieldElement(x, prime)
+        b = FieldElement(y, prime)
+        assert a**exp == b

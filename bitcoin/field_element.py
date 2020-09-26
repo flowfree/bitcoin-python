@@ -11,7 +11,7 @@ class FieldElement(object):
     """
 
     def __init__(self, num, prime):
-        if num >= prime or num < 1:
+        if num >= prime or num < 0:
             raise ValueError(f'Num {num} not in field range 0 to {prime}')
         self.num = num
         self.prime = prime
@@ -37,4 +37,14 @@ class FieldElement(object):
         if self.prime != other.prime:
             raise TypeError(f'Cannot substract two numbers in different fields.')
         num = (self.num - other.num) % self.prime
+        return FieldElement(num, self.prime)
+
+    def __mul__(self, other):
+        if self.prime != other.prime:
+            raise TypeError(f'Cannot multiply two numbers in different fields.')
+        num = (self.num * other.num) % self.prime
+        return FieldElement(num, self.prime)
+
+    def __pow__(self, exponent):
+        num = (self.num ** exponent) % self.prime
         return FieldElement(num, self.prime)
