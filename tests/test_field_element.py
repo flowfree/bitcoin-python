@@ -94,3 +94,18 @@ def test_exponentiations():
         a = FieldElement(x, prime)
         b = FieldElement(y, prime)
         assert a**exp == b
+
+
+def test_divisions():
+    tests = [
+        (19, 2, 7, 3),
+        (19, 7, 5, 9),
+        (19, 10, 5, 2),
+        (21, 3, 7, 0),
+        (21, 2, 14, 7),
+    ]
+    for p, x, y, z in tests:
+        a = FieldElement(x, p)
+        b = FieldElement(y, p)
+        c = FieldElement(z, p)
+        assert a/b == c
