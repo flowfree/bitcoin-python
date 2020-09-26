@@ -89,6 +89,7 @@ def test_exponentiations():
         (13, 2, 7, 11),
         (17, 15, 7, 8),
         (17, 13, 15, 4),
+        (13, 7, -3, 8),
     ]
     for prime, x, exp, y in tests:
         a = FieldElement(x, prime)
