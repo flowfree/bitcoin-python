@@ -5,7 +5,7 @@ class FieldElement(object):
     Attributes
     ----------
     num : int
-        The element.
+        The finite field element.
     prime : int
         The size of the finite field.
     """
@@ -45,6 +45,11 @@ class FieldElement(object):
             raise TypeError(f'Cannot multiply two numbers in different fields.')
         num = (self.num * other.num) % self.prime
         return self.__class__(num, self.prime)
+
+    def __rmul__(self, other):
+        if type(other) == int:
+            other = self.__class__(other, self.prime)
+        return other * self
 
     def __pow__(self, exponent):
         n = exponent % (self.prime - 1)

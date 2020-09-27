@@ -105,3 +105,17 @@ class TestPointWithFieldElement:
             p3 = Point(x3, y3, a, b)
 
             assert p1+p2 == p3
+
+    def test_addition_for_the_same_points(self):
+        prime = 223
+        a = FieldElement(0, prime)
+        b = FieldElement(7, prime)
+        x = FieldElement(47, prime)
+        y = FieldElement(71, prime)
+        p = Point(x, y, a, b)
+
+        assert p+p == Point(
+            FieldElement(36, prime),
+            FieldElement(111, prime),
+            a, b
+        )
