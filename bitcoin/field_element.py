@@ -17,7 +17,8 @@ class FieldElement(object):
         self.prime = prime
 
     def __str__(self):
-        return f'FieldElement_{self.prime}({self.num})'
+        class_name = self.__class__.__name__
+        return f'{class_name}_{self.prime}({self.num})'
 
     def __eq__(self, other):
         if other is None:
@@ -31,24 +32,24 @@ class FieldElement(object):
         if self.prime != other.prime:
             raise TypeError(f'Cannot add two numbers in different fields.')
         num = (self.num + other.num) % self.prime
-        return FieldElement(num, self.prime)
+        return self.__class__(num, self.prime)
 
     def __sub__(self, other):
         if self.prime != other.prime:
             raise TypeError(f'Cannot substract two numbers in different fields.')
         num = (self.num - other.num) % self.prime
-        return FieldElement(num, self.prime)
+        return self.__class__(num, self.prime)
 
     def __mul__(self, other):
         if self.prime != other.prime:
             raise TypeError(f'Cannot multiply two numbers in different fields.')
         num = (self.num * other.num) % self.prime
-        return FieldElement(num, self.prime)
+        return self.__class__(num, self.prime)
 
     def __pow__(self, exponent):
         n = exponent % (self.prime - 1)
         num = pow(self.num, n, self.prime)
-        return FieldElement(num, self.prime)
+        return self.__class__(num, self.prime)
 
     def __truediv__(self, other):
         if self.prime != other.prime:
