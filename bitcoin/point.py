@@ -18,13 +18,16 @@ class Point(object):
         return (self.a, self.b)
 
     @property
-    def is_infinity(self):
+    def is_identity(self):
         return self.x is None and self.y is None
 
     @property
-    def is_finite(self):
-        return (type(self.x) == type(self.y) == \
-                type(self.a) == type(self.b) == FieldElement)
+    def is_finite_field(self):
+        if self.is_identity:
+            return (type(self.a) == type(self.b) == FieldElement)
+        else:
+            return (type(self.x) == type(self.y) == \
+                    type(self.a) == type(self.b) == FieldElement)
 
     def __init__(self, x, y, a, b):
         self.x = x
@@ -38,9 +41,12 @@ class Point(object):
 
     def __str__(self):
         class_name = self.__class__.__name__
-        if self.is_finite:
-            return f'{class_name}({self.x.num},{self.y.num})_{self.a.num}_{self.b.num} ' \
-                   f'FieldElement({self.x.prime})'
+        if self.is_finite_field:
+            if self.is_identity:
+                return f'{class_name}(infinity) FieldElement({self.a.prime})'
+            else:
+                return f'{class_name}({self.x.num},{self.y.num})_{self.a.num}_{self.b.num} ' \
+                    f'FieldElement({self.x.prime})'
         else:
             return f'{class_name}({self.x},{self.y})_{self.a}_{self.b}'
 
@@ -54,9 +60,9 @@ class Point(object):
     def __add__(self, other):
         assert self.curve == other.curve 
 
-        if self.is_infinity:
+        if self.is_identity:
             return other
-        elif other.is_infinity:
+        elif other.is_identity:
             return self
         elif self == other:
             s = (3 * self.x**2 + self.a) / (2 * self.y)
@@ -72,3 +78,14 @@ class Point(object):
             x = s**2 - self.x - other.x
             y = s * (self.x - x) - self.y
             return self.__class__(x, y, self.a, self.b)
+
+    def __rmul__(self, coefficient):
+        coef = coefficient
+        current = self
+        result = self.__class__(None, None, self.a, self.b)
+        while coef:
+            if coef & 1:
+                result += current
+            current += current
+            coef >>= 1
+        return result

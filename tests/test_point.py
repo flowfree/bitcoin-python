@@ -119,3 +119,18 @@ class TestPointWithFieldElement:
             FieldElement(111, prime),
             a, b
         )
+
+    def test_scalar_multiplication(self):
+        prime = 223
+        a = FieldElement(0, prime)
+        b = FieldElement(7, prime)
+        x = FieldElement(15, prime)
+        y = FieldElement(86, prime)
+        p = Point(x, y, a, b)
+
+        assert 6*p == Point(
+            FieldElement(15, prime),
+            FieldElement(137, prime),
+            a, b
+        )
+        assert 7*p == Point(None, None, a, b)
