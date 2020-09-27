@@ -1,6 +1,6 @@
 import pytest 
 
-from bitcoin import Point
+from bitcoin import FieldElement, Point
 
 
 def test_initialization():
@@ -41,3 +41,15 @@ def test_addition():
     p1 = Point(-1, -1, 5, 7)
     p2 = Point(18, 77, 5, 7)
     assert p1+p1 == p2
+
+
+class TestPointWithFieldElement:
+    def test_initialization(self):
+        prime = 223
+        a = FieldElement(0, prime)
+        b = FieldElement(7, prime)
+        x = FieldElement(192, prime)
+        y = FieldElement(105, prime)
+
+        p1 = Point(x, y, a, b)
+        assert str(p1) == 'Point(192,105)_0_7 FieldElement(223)'

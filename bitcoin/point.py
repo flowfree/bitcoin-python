@@ -1,10 +1,13 @@
+from bitcoin import FieldElement
+
+
 class Point(object):
     """
     Represents a point in an elliptic curve.
 
     Attributes
     ----------
-    x, y : float, float
+    x, y : int, int
         The x-axis and y-axis location of the point.
     a, b : int, int
         The parameters for the elliptic curve y^2 = x^3 + ax + b
@@ -18,6 +21,11 @@ class Point(object):
     def is_infinity(self):
         return self.x is None and self.y is None
 
+    @property
+    def is_finite(self):
+        return (type(self.x) == type(self.y) == \
+                type(self.a) == type(self.b) == FieldElement)
+
     def __init__(self, x, y, a, b):
         self.x = x
         self.y = y
@@ -30,7 +38,11 @@ class Point(object):
 
     def __str__(self):
         class_name = self.__class__.__name__
-        return f'{class_name}({self.x},{self.y})_{self.a}_{self.b}'
+        if self.is_finite:
+            return f'{class_name}({self.x.num},{self.y.num})_{self.a.num}_{self.b.num} ' \
+                   f'FieldElement({self.x.prime})'
+        else:
+            return f'{class_name}({self.x},{self.y})_{self.a}_{self.b}'
 
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y and \
