@@ -53,3 +53,21 @@ class TestPointWithFieldElement:
 
         p1 = Point(x, y, a, b)
         assert str(p1) == 'Point(192,105)_0_7 FieldElement(223)'
+
+    def test_on_curve(self):
+        prime = 223
+        a = FieldElement(0, prime)
+        b = FieldElement(7, prime)
+
+        valid_points = [(192, 105), (17, 56), (1, 193)]
+        for x_, y_ in valid_points:
+            x = FieldElement(x_, prime)
+            y = FieldElement(y_, prime)
+            _ = Point(x, y, a, b)
+
+        invalid_points = [(200, 119), (42, 99)]
+        for x_, y_ in invalid_points:
+            x = FieldElement(x_, prime)
+            y = FieldElement(y_, prime)
+            with pytest.raises(ValueError) as e:
+                _ = Point(x, y, a, b)
