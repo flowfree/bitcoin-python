@@ -19,7 +19,7 @@ class S256Point(Point):
         if self.x == None and self.y == None:
             return f'S256Point(infinity)'
         else:
-            return f'S256Point({self.x.num}, {self.y.num})'
+            return f'S256Point({hex(self.x.num)}, {hex(self.y.num)})'
 
     def __rmul__(self, coefficient):
         coef = coefficient % N
