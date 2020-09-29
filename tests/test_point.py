@@ -1,6 +1,7 @@
 import pytest 
 
-from bitcoin import FieldElement, Point
+from bitcoin.field_element import FieldElement
+from bitcoin.point import Point
 
 
 class TestPointWithRealNumbers:

@@ -1,6 +1,6 @@
 import pytest
 
-from bitcoin import FieldElement
+from bitcoin.field_element import FieldElement
 
 
 def test_equal_elements():

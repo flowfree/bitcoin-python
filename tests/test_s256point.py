@@ -1,4 +1,5 @@
-from bitcoin import S256Point, Signature
+from bitcoin.s256point import S256Point
+from bitcoin.signature import Signature
 
 
 def test_verify():

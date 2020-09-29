@@ -1,4 +1,4 @@
-from bitcoin import FieldElement
+from .field_element import FieldElement
 
 
 class Point(object):
