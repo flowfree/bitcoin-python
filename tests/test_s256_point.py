@@ -155,3 +155,19 @@ class TestS256Point:
         for z, r, s in tests:
             signature = Signature(r, s)
             assert p.verify(z, signature) == True
+
+    def test_serialize_uncompressed_sec(self):
+        tests = [
+            S256Point(
+                0x887387e452b8eacc4acfde10d9aaf7f6d9a0f975aabb10d006e4da568744d06c, 
+                0x61de6d95231cd89026e286df3b6ae4a894a3378e393e93a0f45b666329a0ae34,
+            ),
+            S256Point(
+                0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798, 
+                0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8
+            )
+        ]
+        for p0 in tests:
+            serialized = p0.sec()
+            p1 = S256Point.parse(serialized)
+            assert p0 == p1

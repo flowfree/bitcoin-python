@@ -135,6 +135,32 @@ class S256Point(Point):
             return b'\x04' + self.x.val.to_bytes(32, 'big') \
                            + self.y.val.to_bytes(32, 'big')
 
+    @staticmethod
+    def parse(sec_bin):
+        """
+        Returns a Point object from a SEC binary.
+        """
+        if sec_bin[0] == 4:
+            x = int.from_bytes(sec_bin[1:33], 'big')
+            y = int.from_bytes(sec_bin[33:65], 'big')
+            return S256Point(x, y)
+
+        is_even = sec_bin[0] == 2
+        x = S256Field(int.from_bytes(sec_bin[1:], 'big'))
+        alpha = x**3 + S256Field(S256Point.B)
+        beta = alpha.sqrt()
+        if beta.val % 2 == 0:
+            even_beta = beta
+            odd_beta = S256Field(S256Field.P - beta.val)
+        else:
+            even_beta = S256Field(S256Field.P - beta.val)
+            odd_beta = beta
+        if is_even:
+            return S256Point(x, even_beta)
+        else:
+            return S256Point(x, odd_beta)
+
+
 
 G = S256Point(
     0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798, 
