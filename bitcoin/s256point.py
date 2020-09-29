@@ -1,9 +1,6 @@
-from . import Point, S256Field
-
-
-A = 0
-B = 7
-N = 0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141
+from . import A, B, N
+from .point import Point
+from .s256field import S256Field
 
 
 class S256Point(Point):

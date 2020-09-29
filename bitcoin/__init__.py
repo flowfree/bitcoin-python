@@ -1,5 +1,6 @@
-from .field_element import FieldElement
-from .point import Point
-from .s256field import S256Field
-from .s256point import S256Point, G, N
-from .signature import Signature
+A = 0
+B = 7
+N = 0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141
+P = 2**256 - 2**32 - 977
+
+from .s256point import G

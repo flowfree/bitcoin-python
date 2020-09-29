@@ -1,7 +1,5 @@
-from . import FieldElement
-
-
-P = 2**256 - 2**32 - 977
+from . import P
+from .field_element import FieldElement
 
 
 class S256Field(FieldElement):
