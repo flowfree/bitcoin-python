@@ -1,6 +1,6 @@
 import pytest
 
-from bitcoin.s256field import FieldElement
+from bitcoin.s256_field import FieldElement
 
 
 class TestFieldElement:

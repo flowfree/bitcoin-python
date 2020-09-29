@@ -1,4 +1,4 @@
-from .s256field import FieldElement, S256Field
+from .s256_field import FieldElement, S256Field
 
 
 class Point(object):
@@ -120,6 +120,20 @@ class S256Point(Point):
         v = sig.r * s_inv % self.N 
         point = (u * G) + (v * self)
         return point.x.val == sig.r
+
+    def sec(self, compressed=True):
+        """
+        Serialize current point to the binary version of the SEC format.
+        """
+        if compressed:
+            if self.y.val % 2 == 0:
+                prefix = b'\x02' 
+            else:
+                prefix = b'\x03'
+            return prefix + self.x.val.to_bytes(32, 'big')
+        else:
+            return b'\x04' + self.x.val.to_bytes(32, 'big') \
+                           + self.y.val.to_bytes(32, 'big')
 
 
 G = S256Point(

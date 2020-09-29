@@ -1,7 +1,7 @@
 import pytest 
 
-from bitcoin.s256field import FieldElement, S256Field
-from bitcoin.s256point import Point, S256Point
+from bitcoin.s256_field import FieldElement, S256Field
+from bitcoin.s256_point import Point, S256Point
 from bitcoin.signature import Signature
 
 
