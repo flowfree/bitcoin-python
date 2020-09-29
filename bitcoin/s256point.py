@@ -45,7 +45,7 @@ class Point(object):
             if self.is_identity:
                 return f'{class_name}(infinity) FieldElement({self.a.prime})'
             else:
-                return f'{class_name}({self.x.num},{self.y.num})_{self.a.num}_{self.b.num} ' \
+                return f'{class_name}({self.x.val},{self.y.val})_{self.a.val}_{self.b.val} ' \
                     f'FieldElement({self.x.prime})'
         else:
             return f'{class_name}({self.x},{self.y})_{self.a}_{self.b}'
@@ -108,7 +108,7 @@ class S256Point(Point):
         if self.x == None and self.y == None:
             return f'S256Point(infinity)'
         else:
-            return f'S256Point({hex(self.x.num)}, {hex(self.y.num)})'
+            return f'S256Point({hex(self.x.val)}, {hex(self.y.val)})'
 
     def __rmul__(self, coefficient):
         coef = coefficient % self.N
@@ -119,7 +119,7 @@ class S256Point(Point):
         u = z * s_inv % self.N
         v = sig.r * s_inv % self.N 
         point = (u * G) + (v * self)
-        return point.x.num == sig.r
+        return point.x.val == sig.r
 
 
 G = S256Point(

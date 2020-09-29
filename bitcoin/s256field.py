@@ -4,26 +4,26 @@ class FieldElement(object):
 
     Attributes
     ----------
-    num : int
+    val : int
         The finite field element.
     prime : int
         The size of the finite field.
     """
 
-    def __init__(self, num, prime):
-        if num >= prime or num < 0:
-            raise ValueError(f'Num {num} not in field range 0 to {prime}')
-        self.num = num
+    def __init__(self, val, prime):
+        if val >= prime or val < 0:
+            raise ValueError(f'Num {val} not in field range 0 to {prime}')
+        self.val = val
         self.prime = prime
 
     def __str__(self):
         class_name = self.__class__.__name__
-        return f'{class_name}_{self.prime}({self.num})'
+        return f'{class_name}_{self.prime}({self.val})'
 
     def __eq__(self, other):
         if other is None:
             return False
-        return self.prime == other.prime and self.num == other.num
+        return self.prime == other.prime and self.val == other.val
 
     def __ne__(self, other):
         return not self == other
@@ -31,20 +31,20 @@ class FieldElement(object):
     def __add__(self, other):
         if self.prime != other.prime:
             raise TypeError(f'Cannot add two numbers in different fields.')
-        num = (self.num + other.num) % self.prime
-        return self.__class__(num, self.prime)
+        val = (self.val + other.val) % self.prime
+        return self.__class__(val, self.prime)
 
     def __sub__(self, other):
         if self.prime != other.prime:
             raise TypeError(f'Cannot substract two numbers in different fields.')
-        num = (self.num - other.num) % self.prime
-        return self.__class__(num, self.prime)
+        val = (self.val - other.val) % self.prime
+        return self.__class__(val, self.prime)
 
     def __mul__(self, other):
         if self.prime != other.prime:
             raise TypeError(f'Cannot multiply two numbers in different fields.')
-        num = (self.num * other.num) % self.prime
-        return self.__class__(num, self.prime)
+        val = (self.val * other.val) % self.prime
+        return self.__class__(val, self.prime)
 
     def __rmul__(self, other):
         if type(other) == int:
@@ -53,22 +53,22 @@ class FieldElement(object):
 
     def __pow__(self, exponent):
         n = exponent % (self.prime - 1)
-        num = pow(self.num, n, self.prime)
-        return self.__class__(num, self.prime)
+        val = pow(self.val, n, self.prime)
+        return self.__class__(val, self.prime)
 
     def __truediv__(self, other):
         if self.prime != other.prime:
             raise TypeError(f'Cannot divide two numbers in different fields.')
-        num = self * (other ** (self.prime - 2))
-        return num
+        val = self * (other ** (self.prime - 2))
+        return val
 
 
 
 class S256Field(FieldElement):
     P = 2**256 - 2**32 - 977
 
-    def __init__(self, num, *args, **kwargs):
-        super().__init__(num, self.P)
+    def __init__(self, val, *args, **kwargs):
+        super().__init__(val, self.P)
 
     def __str__(self):
-        return '{:x}'.format(self.num).zfill(64)
+        return '{:x}'.format(self.val).zfill(64)
