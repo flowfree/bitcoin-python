@@ -1,5 +1,6 @@
 import pytest 
 
+from bitcoin.constants import G
 from bitcoin.s256_field import FieldElement, S256Field
 from bitcoin.s256_point import Point, S256Point
 from bitcoin.signature import Signature
@@ -171,3 +172,16 @@ class TestS256Point:
             serialized = p0.sec()
             p1 = S256Point.parse(serialized)
             assert p0 == p1
+
+    def test_address(self):
+        e = 5002
+        pub = e * G
+        assert pub.address(compressed=False, testnet=True) == 'mmTPbXQFxboEtNRkwfh6K51jvdtHLxGeMA'
+
+        e = 2020**5
+        pub = e * G
+        assert pub.address(compressed=True, testnet=True) == 'mopVkxp8UhXqRYbCYJsbeE1h1fiF64jcoH'
+
+        e = 0x12345deadbeef
+        pub = e * G
+        assert pub.address(compressed=True, testnet=False) == '1F1Pn2y6pDb68E5nYJJeba4TLg2U7B6KF1'

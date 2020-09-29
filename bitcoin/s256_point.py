@@ -1,4 +1,5 @@
 from .s256_field import FieldElement, S256Field
+from .helpers import hash160, encode_base58_checksum
 
 
 class Point(object):
@@ -160,6 +161,16 @@ class S256Point(Point):
         else:
             return S256Point(x, odd_beta)
 
+    def address(self, compressed=True, testnet=False):
+        """
+        Return the address string.
+        """
+        h160 = hash160(self.sec(compressed))
+        if testnet:
+            prefix = b'\x6f'
+        else:
+            prefix = b'\x00'
+        return encode_base58_checksum(prefix + h160)
 
 
 G = S256Point(

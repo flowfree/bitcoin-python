@@ -1,6 +1,6 @@
 from random import randint 
 
-from . import N, G
+from .constants import N, G
 from .signature import Signature
 
 
