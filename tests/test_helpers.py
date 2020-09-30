@@ -13,3 +13,13 @@ def test_encode_base58():
     for test, expected in tests:
         b = bytes.fromhex(test)
         assert helpers.encode_base58(b) == expected
+
+
+def test_int_to_little_endian():
+    n = helpers.int_to_little_endian(500, 16)
+    assert n.hex() == 'f4010000000000000000000000000000'
+
+
+def test_little_endian_to_int():
+    b = bytes.fromhex('f4010000000000000000000000000000')
+    assert helpers.little_endian_to_int(b) == 500
