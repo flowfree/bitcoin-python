@@ -1,4 +1,5 @@
-from .s256field import FieldElement, S256Field
+from .s256_field import FieldElement, S256Field
+from .helpers import hash160, encode_base58_checksum
 
 
 class Point(object):
@@ -120,6 +121,56 @@ class S256Point(Point):
         v = sig.r * s_inv % self.N 
         point = (u * G) + (v * self)
         return point.x.val == sig.r
+
+    def sec(self, compressed=True):
+        """
+        Serialize current point to the binary version of the SEC format.
+        """
+        if compressed:
+            if self.y.val % 2 == 0:
+                prefix = b'\x02' 
+            else:
+                prefix = b'\x03'
+            return prefix + self.x.val.to_bytes(32, 'big')
+        else:
+            return b'\x04' + self.x.val.to_bytes(32, 'big') \
+                           + self.y.val.to_bytes(32, 'big')
+
+    @staticmethod
+    def parse(sec_bin):
+        """
+        Returns a Point object from a SEC binary.
+        """
+        if sec_bin[0] == 4:
+            x = int.from_bytes(sec_bin[1:33], 'big')
+            y = int.from_bytes(sec_bin[33:65], 'big')
+            return S256Point(x, y)
+
+        is_even = sec_bin[0] == 2
+        x = S256Field(int.from_bytes(sec_bin[1:], 'big'))
+        alpha = x**3 + S256Field(S256Point.B)
+        beta = alpha.sqrt()
+        if beta.val % 2 == 0:
+            even_beta = beta
+            odd_beta = S256Field(S256Field.P - beta.val)
+        else:
+            even_beta = S256Field(S256Field.P - beta.val)
+            odd_beta = beta
+        if is_even:
+            return S256Point(x, even_beta)
+        else:
+            return S256Point(x, odd_beta)
+
+    def address(self, compressed=True, testnet=False):
+        """
+        Return the address string.
+        """
+        h160 = hash160(self.sec(compressed))
+        if testnet:
+            prefix = b'\x6f'
+        else:
+            prefix = b'\x00'
+        return encode_base58_checksum(prefix + h160)
 
 
 G = S256Point(

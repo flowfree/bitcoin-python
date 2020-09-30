@@ -72,3 +72,6 @@ class S256Field(FieldElement):
 
     def __str__(self):
         return '{:x}'.format(self.val).zfill(64)
+
+    def sqrt(self):
+        return self**((self.P + 1) // 4)
