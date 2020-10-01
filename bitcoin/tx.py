@@ -1,4 +1,5 @@
-from .helpers import hash256, little_endian_to_int
+from .helpers import hash256, little_endian_to_int, read_varints
+from .script import Script
 
 
 class Tx(object):
@@ -39,6 +40,33 @@ class Tx(object):
         return hash256(self.serialize())[::-1]
 
     @staticmethod
-    def parse(stream):
-        version_ = stream.read(4)
-        self.version = little_endian_to_int(version_)
+    def parse(stream, testnet=False):
+        version = little_endian_to_int(stream.read(4))
+        num_inputs = read_varints(stream)
+        inputs = []
+        for _ in range(num_inputs):
+            inputs.append(TxIn.parse(stream))
+        return Tx(version, inputs, None, None, testnet=testnet)
+
+
+class TxIn(object):
+    def __init__(self, prev_tx, prev_index, 
+                 script_sig=None, sequence=0xffffffff):
+        self.prev_tx = prev_tx
+        self.prev_index = prev_index
+        if script_sig is None:
+            self.script_sig = Script()
+        else:
+            self.script_sig = script_sig
+        self.sequence = sequence
+
+    def __str__(self):
+        return f'{self.prev_tx.hex()}: {self.prev_index}'
+
+    @staticmethod
+    def parse(stream, testnet=False):
+        prev_tx = stream.read(32)[::-1]
+        prev_index = little_endian_to_int(stream.read(4))
+        script_sig = Script.parse(stream)
+        sequence = little_endian_to_int(stream.read(4))
+        return TxIn(prev_tx, prev_index, script_sig, sequence)
