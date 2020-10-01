@@ -38,3 +38,34 @@ def little_endian_to_int(b):
 
 def int_to_little_endian(n, num_bytes):
     return n.to_bytes(num_bytes, 'little')
+
+
+def read_varints(stream):
+    """
+    Reads a variable integer from a stream.
+    """
+    i = stream.read(1)[0]
+    if i == 0xfd:
+        return little_endian_to_int(stream.read(2))
+    elif i == 0xfe:
+        return little_endian_to_int(stream.read(4))
+    elif i == 0xff:
+        return little_endian_to_int(stream.read(8))
+    else:
+        return i
+
+
+def encode_varints(i):
+    """
+    Encodes an integer as a varint.
+    """
+    if i < 0xfd:
+        return bytes([i])
+    elif i < 0x10000:
+        return b'\xfd' + int_to_little_endian(i, 2)
+    elif i < 0x100000000:
+        return b'\xfe' + int_to_little_endian(i, 4)
+    elif i < 0x10000000000000000:
+        return b'\xff' + int_to_little_endian(i, 8)
+    else:
+        raise ValueError(f'Integer too large: {i}')
