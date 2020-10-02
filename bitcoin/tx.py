@@ -42,11 +42,17 @@ class Tx(object):
     @staticmethod
     def parse(stream, testnet=False):
         version = little_endian_to_int(stream.read(4))
-        num_inputs = read_varints(stream)
         inputs = []
+        num_inputs = read_varints(stream)
         for _ in range(num_inputs):
             inputs.append(TxIn.parse(stream))
-        return Tx(version, inputs, None, None, testnet=testnet)
+        outputs = []
+        num_outputs = read_varints(stream)
+        for _ in range(num_outputs):
+            outputs.append(TxOut.parse(stream))
+        sequence = stream.read(4)
+
+        return Tx(version, inputs, outputs, None, testnet=testnet)
 
 
 class TxIn(object):
@@ -69,4 +75,23 @@ class TxIn(object):
         prev_index = little_endian_to_int(stream.read(4))
         script_sig = Script.parse(stream)
         sequence = little_endian_to_int(stream.read(4))
+
         return TxIn(prev_tx, prev_index, script_sig, sequence)
+
+
+class TxOut(object):
+    def __init__(self, amount, script_pubkey):
+        self.amount = amount
+        self.script_pubkey = script_pubkey
+
+    def __str__(self):
+        return f'{self.amount}: {self.script_pubkey}'
+
+    @staticmethod
+    def parse(stream, testnet=False):
+        amount = little_endian_to_int(stream.read(8))
+        length = read_varints(stream)
+        print(length)
+        script_pubkey = stream.read(length)
+
+        return TxOut(amount, script_pubkey)

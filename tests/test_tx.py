@@ -2,7 +2,7 @@ from io import BytesIO
 
 import pytest
 
-from bitcoin.tx import Tx
+from bitcoin.tx import Tx, TxIn, TxOut
 
 
 @pytest.fixture
@@ -20,15 +20,38 @@ def stream():
     return BytesIO(raw_tx)
 
 
-def test_parse_version(stream):
-    tx = Tx.parse(stream)
-    assert tx.version == 1
+class TestTx:
+    def test_parse_version(self, stream):
+        tx = Tx.parse(stream)
+        assert tx.version == 1
+
+    def test_parse_inputs(self, stream):
+        tx = Tx.parse(stream)
+
+        assert len(tx.tx_ins) == 1
+        assert tx.tx_ins[0].prev_tx == bytes.fromhex('d1c789a9c60383bf715f3f6ad9d14b91' \
+                                                    'fe55f3deb369fe5d9280cb1a01793f81')
+        assert tx.tx_ins[0].prev_index == 0
+
+    def test_parse_outputs(self, stream):
+        tx = Tx.parse(stream)
+
+        assert len(tx.tx_outs) == 2
+        assert tx.tx_outs[0].amount == 32454049
+        assert tx.tx_outs[0].script_pubkey == bytes.fromhex('76a914bc3b654dca7e56b04d' \
+                                                            'ca18f2566cdaf02e8d9ada88ac')
+        assert tx.tx_outs[1].amount == 10011545
+        assert tx.tx_outs[1].script_pubkey == bytes.fromhex('76a9141c4bc762dd5423e332' \
+                                                            '166702cb75f40df79fea1288ac')
 
 
-def test_parse_inputs(stream):
-    tx = Tx.parse(stream)
+class TestTxOut:
+    def test_parse(self):
+        raw_hex = 'a135ef01000000001976a914bc3b654dca7e56b04dca18f2566cdaf02e8d9ada88ac'
+        stream = BytesIO(bytes.fromhex(raw_hex))
 
-    assert len(tx.tx_ins) == 1
-    assert tx.tx_ins[0].prev_tx == bytes.fromhex('d1c789a9c60383bf715f3f6ad9d14b91' \
-                                                 'fe55f3deb369fe5d9280cb1a01793f81')
-    assert tx.tx_ins[0].prev_index == 0
+        tx_out = TxOut.parse(stream)
+
+        assert tx_out.amount == 32454049
+        assert tx_out.script_pubkey == bytes.fromhex('76a914bc3b654dca7e56b04d' \
+                                                     'ca18f2566cdaf02e8d9ada88ac')
