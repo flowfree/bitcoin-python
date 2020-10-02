@@ -1,3 +1,7 @@
+from io import BytesIO
+
+import requests 
+
 from .helpers import hash256, little_endian_to_int, read_varints
 from .script import Script
 
@@ -81,6 +85,17 @@ class TxIn(object):
 
         return TxIn(prev_tx, prev_index, script_sig, sequence)
 
+    def fetch_tx(self, testnet=False):
+        return TxFetcher.fetch(self.prev_tx.hex(), testnet=testnet)
+
+    def value(self, testnet=False):
+        tx = self.fetch_tx(testnet=testnet)
+        return tx.tx_outs[self.prev_index].amount
+
+    def script_pubkey(self, testnet=False):
+        tx = self.fetch_tx(testnet=testnet)
+        return tx.tx_outs[self.prev_index].script_pubkey
+
     def serialize(self):
         raise NotImplementedError
 
@@ -103,3 +118,36 @@ class TxOut(object):
 
     def serialize(self):
         raise NotImplementedError
+
+
+class TxFetcher:
+    cache = {}
+
+    @staticmethod
+    def get_url(testnet=False):
+        if testnet:
+            return 'http://testnet.programmingbitcoin.com'
+        else:
+            return 'http://mainnet.programmingbitcoin.com'
+
+    @staticmethod
+    def fetch(tx_id, testnet=False, fresh=False):
+        if fresh or (tx_id not in TxFetcher.cache):
+            url = f'{TxFetcher.get_url(testnet)}/tx/{tx_id}.hex'
+            response = requests.get(url)
+            try:
+                raw = bytes.fromhex(response.text.strip())
+            except ValueError:
+                raise ValueError(f'Unexpected response: {response.text}')
+            if raw[4] == 0:
+                raw = raw[:4] + raw[6:]
+                tx = Tx.parse(BytesIO(raw), testnet=testnet)
+                tx.locktime = little_endian_to_int(raw[-4:])
+            else:
+                tx = Tx.parse(BytesIO(raw), testnet=testnet)
+            if tx.id() != tx_id:
+                raise ValueError(f'Not the same ID: {tx.id()} vs {tx_id}.')
+            TxFetcher.cache[tx_id] = tx
+        TxFetcher.cache[tx_id].testnet = testnet
+
+        return TxFetcher.cache[tx_id]
