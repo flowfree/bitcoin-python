@@ -54,6 +54,9 @@ class Tx(object):
 
         return Tx(version, inputs, outputs, locktime, testnet=testnet)
 
+    def serialize(self):
+        raise NotImplementedError
+
 
 class TxIn(object):
     def __init__(self, prev_tx, prev_index, 
@@ -78,6 +81,9 @@ class TxIn(object):
 
         return TxIn(prev_tx, prev_index, script_sig, sequence)
 
+    def serialize(self):
+        raise NotImplementedError
+
 
 class TxOut(object):
     def __init__(self, amount, script_pubkey):
@@ -94,3 +100,6 @@ class TxOut(object):
         script_pubkey = stream.read(length)
 
         return TxOut(amount, script_pubkey)
+
+    def serialize(self):
+        raise NotImplementedError
