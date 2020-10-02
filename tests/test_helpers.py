@@ -1,3 +1,5 @@
+from io import BytesIO
+
 from bitcoin import helpers
 
 
@@ -23,3 +25,23 @@ def test_int_to_little_endian():
 def test_little_endian_to_int():
     b = bytes.fromhex('f4010000000000000000000000000000')
     assert helpers.little_endian_to_int(b) == 500
+
+
+def test_encode_varints():
+    assert helpers.encode_varints(255) == b'\xfd\xff\x00'
+    assert helpers.encode_varints(555) == b'\xfd\x2b\x02'
+    assert helpers.encode_varints(70015) == b'\xfe\x7f\x11\x01\x00'
+    assert helpers.encode_varints(112233445566778899) == b'\xff\x13\x0e\xed^\xb9\xbb\x8e\x01'
+
+
+def test_read_varints():
+    tests = [
+        (b'\x01\x00\x00', 1),
+        (b'\xfd\xff\x00', 255),
+        (b'\xfd\x2b\x02', 555),
+        (b'\xfe\x7f\x11\x01\x00', 70015),
+        (b'\xff\x13\x0e\xed^\xb9\xbb\x8e\x01', 112233445566778899),
+    ]
+    for x, y in tests:
+        stream = BytesIO(x)
+        assert helpers.read_varints(stream) == y
