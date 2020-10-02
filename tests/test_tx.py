@@ -44,6 +44,10 @@ class TestTx:
         assert tx.tx_outs[1].script_pubkey == bytes.fromhex('76a9141c4bc762dd5423e332' \
                                                             '166702cb75f40df79fea1288ac')
 
+    def test_parse_locktime(self, stream):
+        tx = Tx.parse(stream)
+        assert tx.locktime == 410393
+
 
 class TestTxOut:
     def test_parse(self):

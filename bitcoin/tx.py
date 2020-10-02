@@ -50,9 +50,9 @@ class Tx(object):
         num_outputs = read_varints(stream)
         for _ in range(num_outputs):
             outputs.append(TxOut.parse(stream))
-        sequence = stream.read(4)
+        locktime = little_endian_to_int(stream.read(4))
 
-        return Tx(version, inputs, outputs, None, testnet=testnet)
+        return Tx(version, inputs, outputs, locktime, testnet=testnet)
 
 
 class TxIn(object):
@@ -91,7 +91,6 @@ class TxOut(object):
     def parse(stream, testnet=False):
         amount = little_endian_to_int(stream.read(8))
         length = read_varints(stream)
-        print(length)
         script_pubkey = stream.read(length)
 
         return TxOut(amount, script_pubkey)
