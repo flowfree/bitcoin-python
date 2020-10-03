@@ -45,7 +45,3 @@ def test_read_varints():
     for x, y in tests:
         stream = BytesIO(x)
         assert helpers.read_varints(stream) == y
-
-
-def test_one():
-    assert 1
