@@ -1,4 +1,7 @@
-from .helpers import read_varints, little_endian_to_int
+from .helpers import (
+    encode_varints, int_to_little_endian, little_endian_to_int, 
+    read_varints
+)
 
 
 class Script(object):
@@ -40,3 +43,28 @@ class Script(object):
         if count != length:
             raise SyntaxError('Parsing script failed.')
         return Script(cmds)
+
+    def raw_serialize(self):
+        result = b''
+        for cmd in self.cmds:
+            if type(cmd) == int:
+                result += int_to_little_endian(cmd, 1)
+            else:
+                length = len(cmd)
+                if length < 75:
+                    result += int_to_little_endian(length, 1)
+                elif length >= 76 and length < 0x100:
+                    result += int_to_little_endian(76, 1)
+                    result += int_to_little_endian(length, 1)
+                elif length >= 0x100 and length <= 520:
+                    result += int_to_little_endian(77, 1)
+                    result += int_to_little_endian(length, 2)
+                else:
+                    raise ValueError('Too long for a cmd.')
+                result += cmd
+        return result
+
+    def serialize(self):
+        result = self.raw_serialize()
+        length = len(result)
+        return encode_varints(length) + result
