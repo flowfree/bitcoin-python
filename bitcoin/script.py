@@ -44,7 +44,7 @@ class Script(object):
             raise SyntaxError('Parsing script failed.')
         return Script(cmds)
 
-    def raw_serialize(self):
+    def serialize(self):
         result = b''
         for cmd in self.cmds:
             if type(cmd) == int:
@@ -62,9 +62,6 @@ class Script(object):
                 else:
                     raise ValueError('Too long for a cmd.')
                 result += cmd
-        return result
 
-    def serialize(self):
-        result = self.raw_serialize()
         length = len(result)
         return encode_varints(length) + result
