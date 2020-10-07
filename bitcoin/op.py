@@ -116,92 +116,128 @@ def op_NUM(**kwargs):
 
 
 def op_0(**kwargs):
-    """Push an empty array of bytes onto the stack."""
+    """
+    Push an empty array of bytes onto the stack.
+    """
     return op_NUM(num=0, **kwargs)
 
 
 def op_1(**kwargs):
-    """Push the number 1 onto the stack."""
+    """
+    Push the number 1 onto the stack.
+    """
     return op_NUM(num=1, **kwargs)
 
 
 def op_2(**kwargs):
-    """Push the number 2 onto the stack."""
+    """
+    Push the number 2 onto the stack.
+    """
     return op_NUM(num=2, **kwargs)
 
 
 def op_3(**kwargs):
-    """Push the number 3 onto the stack."""
+    """
+    Push the number 3 onto the stack.
+    """
     return op_NUM(num=3, **kwargs)
 
 
 def op_4(**kwargs):
-    """Push the number 4 onto the stack."""
+    """
+    Push the number 4 onto the stack.
+    """
     return op_NUM(num=4, **kwargs)
 
 
 def op_5(**kwargs):
-    """Push the number 5 onto the stack."""
+    """
+    Push the number 5 onto the stack.
+    """
     return op_NUM(num=5, **kwargs)
 
 
 def op_6(**kwargs):
-    """Push the number 6 onto the stack."""
+    """
+    Push the number 6 onto the stack.
+    """
     return op_NUM(num=6, **kwargs)
 
 
 def op_7(**kwargs):
-    """Push the number 7 onto the stack."""
+    """
+    Push the number 7 onto the stack.
+    """
     return op_NUM(num=7, **kwargs)
 
 
 def op_8(**kwargs):
-    """Push the number 8 onto the stack."""
+    """
+    Push the number 8 onto the stack.
+    """
     return op_NUM(num=8, **kwargs)
 
 
 def op_9(**kwargs):
-    """Push the number 9 onto the stack."""
+    """
+    Push the number 9 onto the stack.
+    """
     return op_NUM(num=9, **kwargs)
 
 
 def op_10(**kwargs):
-    """Push the number 10 onto the stack."""
+    """
+    Push the number 10 onto the stack.
+    """
     return op_NUM(num=10, **kwargs)
 
 
 def op_11(**kwargs):
-    """Push the number 11 onto the stack."""
+    """
+    Push the number 11 onto the stack.
+    """
     return op_NUM(num=11, **kwargs)
 
 
 def op_12(**kwargs):
-    """Push the number 12 onto the stack."""
+    """
+    Push the number 12 onto the stack.
+    """
     return op_NUM(num=12, **kwargs)
 
 
 def op_13(**kwargs):
-    """Push the number 13 onto the stack."""
+    """
+    Push the number 13 onto the stack.
+    """
     return op_NUM(num=13, **kwargs)
 
 
 def op_14(**kwargs):
-    """Push the number 14 onto the stack."""
+    """
+    Push the number 14 onto the stack.
+    """
     return op_NUM(num=14, **kwargs)
 
 
 def op_15(**kwargs):
-    """Push the number 15 onto the stack."""
+    """
+    Push the number 15 onto the stack.
+    """
     return op_NUM(num=15, **kwargs)
 
 
 def op_16(**kwargs):
-    """Push the number 16 onto the stack."""
+    """
+    Push the number 16 onto the stack.
+    """
     return op_NUM(num=16, **kwargs)
 
 
 def op_1negate(**kwargs):
-    """Push the number -1 onto the stack."""
+    """
+    Push the number -1 onto the stack.
+    """
     return op_NUM(num=-1, **kwargs)
 
 
@@ -209,17 +245,19 @@ def op_1negate(**kwargs):
 # ---------------------------------------------------------
 
 
-def op_nop():
+def op_nop(**kwargs):
     """Does nothing"""
     return True
 
 
-def op_if(stack, commands, stackval=True):
+def op_if(stackval=True, **kwargs):
     """
     Remake the commands array to contain only the IF block if the 
     top stack value is true.
     """
-    if len(stack) < 1:
+    stack = kwargs.get('stack')
+    commands = kwargs.get('commands')
+    if stack is None or len(stack) < 1:
         return False
     if_commands = []
     else_commands = []
@@ -253,16 +291,19 @@ def op_if(stack, commands, stackval=True):
     return True
 
 
-def op_notif(stack, commands):
+def op_notif(**kwargs):
     """
     Remake the commands array to contain only the NOTIF block if the 
     top stack value is false.
     """
-    return op_if(stack, commands, stackval=False)
+    return op_if(stackval=False, **kwargs)
 
 
-def op_verify(stack):
-    """Marks transaction as invalid if top stack value is not true."""
+def op_verify(**kwargs):
+    """
+    Marks transaction as invalid if top stack value is not true.
+    """
+    stack = kwargs.get('stack')
     if len(stack) < 1:
         return False
     element = stack.pop()
@@ -298,8 +339,11 @@ def op_drop():
     raise NotImplementedError
 
 
-def op_dup(stack):
-    """Duplicates the top stack item."""
+def op_dup(**kwargs):
+    """
+    Duplicates the top stack item.
+    """
+    stack = kwargs.get('stack')
     if len(stack) < 1:
         return False
     stack.append(stack[-1])
@@ -432,7 +476,8 @@ def op_equalverify():
 # ----------------------------------------------------------------------------
 
 
-def op_hash160(stack):
+def op_hash160(**kwargs):
+    stack = kwargs.get('stack')
     if len(stack) < 1:
         return False
     element = stack.pop()
@@ -440,7 +485,8 @@ def op_hash160(stack):
     return True
 
 
-def op_hash256(stack):
+def op_hash256(**kwargs):
+    stack = kwargs.get('stack')
     if len(stack) < 1:
         return False
     element = stack.pop()

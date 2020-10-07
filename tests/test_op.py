@@ -143,39 +143,37 @@ def test_op_1negate():
 class TestOpDup:
     def test_stack_is_empty(self):
         stack = []
-        assert op_dup(stack) == False
+        assert op_dup(stack=stack) == False
 
     def test_operation(self):
         stack = [0x0001]
-        status = op_dup(stack)
-
+        assert op_dup(stack=stack) == True
         assert stack == [0x0001, 0x0001]
-        assert status == True
 
 
 class TestOpHash160:
     def test_stack_is_empty(self):
         stack = []
-        assert op_hash160(stack) == False
+        assert op_hash160(stack=stack) == False
 
     def test_operation(self):
         x = bytes.fromhex('0001')
         stack = [x]
 
-        assert op_hash160(stack) == True
+        assert op_hash160(stack=stack) == True
         assert stack == [helpers.hash160(x)]
 
 
 class TestOpHash256:
     def test_stack_is_empty(self):
         stack = []
-        assert op_hash256(stack) == False
+        assert op_hash256(stack=stack) == False
 
     def test_operation(self):
         x = bytes.fromhex('0001')
         stack = [x]
 
-        assert op_hash256(stack) == True
+        assert op_hash256(stack=stack) == True
         assert stack == [helpers.hash256(x)]
 
 
@@ -190,7 +188,7 @@ class TestOpIf:
         ]
         _ = commands.pop(0)
 
-        assert op_if(stack, commands) == True
+        assert op_if(stack=stack, commands=commands) == True
         assert stack == []
         assert commands == [OP_2, OP_3]
 
@@ -206,7 +204,7 @@ class TestOpIf:
         ]
         _ = commands.pop(0)
 
-        assert op_if(stack, commands) == True
+        assert op_if(stack=stack, commands=commands) == True
         assert stack == []
         assert commands == [OP_2, OP_4]
 
@@ -222,7 +220,7 @@ class TestOpIf:
         ]
         _ = commands.pop(0)
 
-        assert op_if(stack, commands) == True
+        assert op_if(stack=stack, commands=commands) == True
         assert stack == []
         assert commands == [OP_3, OP_4]
 
@@ -246,7 +244,7 @@ class TestOpIf:
         ]
         _ = commands.pop(0)
 
-        assert op_if(stack, commands) == True
+        assert op_if(stack=stack, commands=commands) == True
         assert stack == [encode_num(0)]
         assert commands == [
             OP_2, 
@@ -273,7 +271,7 @@ class TestOpIf:
         ]
         _ = commands.pop(0)
 
-        assert op_if(stack, commands) == True
+        assert op_if(stack=stack, commands=commands) == True
         assert stack == [encode_num(1)]
         assert commands == [
             OP_3,
@@ -305,7 +303,7 @@ class TestOpIf:
         ]
         _ = commands.pop(0)
 
-        assert op_if(stack, commands) == True
+        assert op_if(stack=stack, commands=commands) == True
         assert stack == [encode_num(0)]
         assert commands == [
             OP_10,
@@ -326,7 +324,7 @@ class TestOpIf:
         ]
         _ = commands.pop(0)
 
-        assert op_if(stack, commands) == False
+        assert op_if(stack=stack, commands=commands) == False
 
     def test_invalid_script(self):
         stack = [encode_num(1)]
@@ -337,7 +335,7 @@ class TestOpIf:
         ]
         for test in tests:
             _ = test.pop(0)
-            assert op_if(stack, test) == False
+            assert op_if(stack=stack, commands=test) == False
 
 
 class TestOpNotIf:
@@ -351,7 +349,7 @@ class TestOpNotIf:
         ]
         _ = commands.pop(0)
 
-        assert op_notif(stack, commands) == True
+        assert op_notif(stack=stack, commands=commands) == True
         assert stack == []
         assert commands == [OP_2, OP_3]
 
@@ -365,7 +363,7 @@ class TestOpNotIf:
         ]
         _ = commands.pop(0)
 
-        assert op_notif(stack, commands) == True
+        assert op_notif(stack=stack, commands=commands) == True
         assert stack == []
         assert commands == [OP_3]
 
@@ -383,7 +381,7 @@ class TestOpNotIf:
         ]
         _ = commands.pop(0)
 
-        assert op_notif(stack, commands) == True
+        assert op_notif(stack=stack, commands=commands) == True
         assert stack == []
         assert commands == [
             OP_IF, 
@@ -395,7 +393,7 @@ class TestOpNotIf:
 
 def test_op_verify():
     stack = [encode_num(1)]
-    assert op_verify(stack) == True
+    assert op_verify(stack=stack) == True
 
     stack = [encode_num(0)]
-    assert op_verify(stack) == False
+    assert op_verify(stack=stack) == False
