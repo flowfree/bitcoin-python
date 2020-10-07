@@ -3,7 +3,9 @@ from .helpers import (
     read_varints
 )
 from .op import (
-    op_dup, op_hash160, op_hash256
+    op_0, op_1, op_2, op_3, op_4, op_5, op_6, op_7, op_8,
+    op_9, op_10, op_11, op_12, op_13, op_14, op_15, op_16,
+    op_dup, op_hash160, op_hash256, op_nop
 )
 
 
@@ -106,6 +108,24 @@ OP_CHECKLOCKTIMEVERIFY = 0xb1
 OP_CHECKSEQUENCEVERIFY = 0xb2
 
 OP_CODE_FUNCTIONS = {
+    0x00: op_0,
+    0x51: op_1,
+    0x52: op_2,
+    0x53: op_3,
+    0x54: op_4,
+    0x55: op_5,
+    0x56: op_6,
+    0x57: op_7,
+    0x58: op_8,
+    0x59: op_9,
+    0x5a: op_10,
+    0x5b: op_11,
+    0x5c: op_12,
+    0x5d: op_13,
+    0x5e: op_14,
+    0x5f: op_15,
+    0x60: op_16,
+    0x61: op_nop,
     0x76: op_dup,
     0xa9: op_hash160,
     0xaa: op_hash256,
