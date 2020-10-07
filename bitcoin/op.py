@@ -140,7 +140,7 @@ def decode_num(element):
         return result
 
 
-# Value-pushing functions
+# VALUE-PUSHING FUNCTIONS
 # -------------------------------------------------------------------------
 
 
@@ -252,26 +252,12 @@ def op_1negate(stack):
     return True
 
 
-def op_dup(stack):
-    if len(stack) < 1:
-        return False
-    stack.append(stack[-1])
-    return True
+# FLOW CONTROL FUNCTIONS
+# ---------------------------------------------------------
 
 
-def op_hash160(stack):
-    if len(stack) < 1:
-        return False
-    element = stack.pop()
-    stack.append(hash160(element))
-    return True
-
-
-def op_hash256(stack):
-    if len(stack) < 1:
-        return False
-    element = stack.pop()
-    stack.append(hash256(element))
+def op_nop():
+    """Does nothing"""
     return True
 
 
@@ -315,15 +301,6 @@ def op_notif(stack, commands):
     return op_if(stack, commands, stackval=False)
 
 
-def op_nop():
-    """0x61"""
-    return True
-
-
-def op_return():
-    return False
-
-
 def op_verify(stack):
     if len(stack) < 1:
         return False
@@ -331,7 +308,39 @@ def op_verify(stack):
     return decode_num(element) != 0
 
 
+def op_return():
+    return False
+
+
+def op_dup(stack):
+    if len(stack) < 1:
+        return False
+    stack.append(stack[-1])
+    return True
+
+
+# CRYPTO FUNCTIONS
+# -------------------------------------------------------
+
+
+def op_hash160(stack):
+    if len(stack) < 1:
+        return False
+    element = stack.pop()
+    stack.append(hash160(element))
+    return True
+
+
+def op_hash256(stack):
+    if len(stack) < 1:
+        return False
+    element = stack.pop()
+    stack.append(hash256(element))
+    return True
+
+
 OP_CODE_FUNCTIONS = {
+    # Value-pushing functions
     OP_0: op_0,
     OP_1: op_1,
     OP_2: op_2,
@@ -350,11 +359,18 @@ OP_CODE_FUNCTIONS = {
     OP_15: op_15,
     OP_16: op_16,
     OP_1NEGATE: op_1negate,
+
+    # Flow control functions
     OP_NOP: op_nop,
     OP_IF: op_if,
+    OP_NOTIF: op_notif,
+    OP_VERIFY: op_verify,
+    OP_RETURN: op_return,
+
+    # Stack functions
     OP_DUP: op_dup,
+
+    # Crypto functions
     OP_HASH160: op_hash160,
     OP_HASH256: op_hash256,
-    OP_RETURN: op_return,
-    OP_VERIFY: op_verify,
 }
