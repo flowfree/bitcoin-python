@@ -1,4 +1,4 @@
-from .helpers import hash160, hash256 
+from .helpers import decode_num, encode_num, hash160, hash256 
 
 
 # Opcode contants
@@ -100,44 +100,6 @@ OP_CHECKMULTISIG = 0xae
 OP_CHECKMULTISIGVERIFY = 0xaf
 OP_CHECKLOCKTIMEVERIFY = 0xb1
 OP_CHECKSEQUENCEVERIFY = 0xb2
-
-
-def encode_num(num):
-    if num == 0:
-        return b''
-    abs_num = abs(num)
-    negative = num < 0
-    result = bytearray()
-    while abs_num:
-        result.append(abs_num & 0xff)
-        abs_num >>= 8
-    if result[-1] & 0x80:
-        if negative:
-            result.append(0x80)
-        else:
-            result.append(0)
-    elif negative:
-        result[-1] = result[-1] | 0x80
-    return bytes(result)
-
-
-def decode_num(element):
-    if element == b'':
-        return 0
-    big_endian = element[::-1]
-    if big_endian[0] & 0x80:
-        negative = True
-        result = big_endian[0] & 0x7f
-    else:
-        negative = False
-        result = big_endian[0]
-    for c in big_endian[1:]:
-        result <<= 8
-        result += c
-    if negative:
-        return -result
-    else:
-        return result
 
 
 # VALUE-PUSHING FUNCTIONS
@@ -262,6 +224,10 @@ def op_nop():
 
 
 def op_if(stack, commands, stackval=True):
+    """
+    Remake the commands array to contain only the IF block if the 
+    top stack value is true.
+    """
     if len(stack) < 1:
         return False
     if_commands = []
@@ -288,7 +254,6 @@ def op_if(stack, commands, stackval=True):
 
     if not found:
         return False
-
     element = stack.pop()
     if decode_num(element) == 0:
         commands[:0] = else_commands if stackval else if_commands
@@ -298,10 +263,15 @@ def op_if(stack, commands, stackval=True):
 
 
 def op_notif(stack, commands):
+    """
+    Remake the commands array to contain only the NOTIF block if the 
+    top stack value is false.
+    """
     return op_if(stack, commands, stackval=False)
 
 
 def op_verify(stack):
+    """Marks transaction as invalid if top stack value is not true."""
     if len(stack) < 1:
         return False
     element = stack.pop()
@@ -309,18 +279,96 @@ def op_verify(stack):
 
 
 def op_return():
+    """Marks transaction as invalid."""
     return False
 
 
+# STACK FUNCTIONS
+# ----------------------------------------------------------------------------
+
+
+def op_toaltstack():
+    raise NotImplementedError
+
+
+def op_fromaltstack():
+    raise NotImplementedError
+
+
+def op_ifdup():
+    raise NotImplementedError
+
+
+def op_depth():
+    raise NotImplementedError
+
+
+def op_drop():
+    raise NotImplementedError
+
+
 def op_dup(stack):
+    """Duplicates the top stack item."""
     if len(stack) < 1:
         return False
     stack.append(stack[-1])
     return True
 
 
+def op_nip():
+    raise NotImplementedError
+
+
+def op_over():
+    raise NotImplementedError
+
+
+def op_pick():
+    raise NotImplementedError
+
+
+def op_roll():
+    raise NotImplementedError
+
+
+def op_rot():
+    raise NotImplementedError
+
+
+def op_swap():
+    raise NotImplementedError
+
+
+def op_tuck():
+    raise NotImplementedError
+
+
+def op_2drop():
+    raise NotImplementedError
+
+
+def op_2dup():
+    raise NotImplementedError
+
+
+def op_3dup():
+    raise NotImplementedError
+
+
+def op_2over():
+    raise NotImplementedError
+
+
+def op_2rot():
+    raise NotImplementedError
+
+
+def op_2swap():
+    raise NotImplementedError
+
+
 # CRYPTO FUNCTIONS
-# -------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 
 def op_hash160(stack):
@@ -368,7 +416,25 @@ OP_CODE_FUNCTIONS = {
     OP_RETURN: op_return,
 
     # Stack functions
+    OP_TOALTSTACK: op_toaltstack,
+    OP_FROMALTSTACK: op_fromaltstack,
+    OP_IFDUP: op_ifdup,
+    OP_DEPTH: op_depth,
+    OP_DROP: op_drop,
     OP_DUP: op_dup,
+    OP_NIP: op_nip,
+    OP_OVER: op_over,
+    OP_PICK: op_pick,
+    OP_ROLL: op_roll,
+    OP_ROT: op_rot,
+    OP_SWAP: op_swap,
+    OP_TUCK: op_tuck,
+    OP_2DROP: op_2drop,
+    OP_2DUP: op_2dup,
+    OP_3DUP: op_3dup,
+    OP_2OVER: op_2over,
+    OP_2ROT: op_2rot,
+    OP_2SWAP: op_2swap,
 
     # Crypto functions
     OP_HASH160: op_hash160,
