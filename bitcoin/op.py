@@ -106,112 +106,103 @@ OP_CHECKSEQUENCEVERIFY = 0xb2
 # -------------------------------------------------------------------------
 
 
-def op_0(stack):
+def op_NUM(**kwargs):
+    num = kwargs.get('num')
+    stack = kwargs.get('stack')
+    if num is None or stack is None:
+        return False
+    stack.append(encode_num(num))
+    return True
+
+
+def op_0(**kwargs):
     """Push an empty array of bytes onto the stack."""
-    stack.append(encode_num(0))
-    return True
+    return op_NUM(num=0, **kwargs)
 
 
-def op_1(stack):
+def op_1(**kwargs):
     """Push the number 1 onto the stack."""
-    stack.append(encode_num(1))
-    return True
+    return op_NUM(num=1, **kwargs)
 
 
-def op_2(stack):
+def op_2(**kwargs):
     """Push the number 2 onto the stack."""
-    stack.append(encode_num(2))
-    return True
+    return op_NUM(num=2, **kwargs)
 
 
-def op_3(stack):
+def op_3(**kwargs):
     """Push the number 3 onto the stack."""
-    stack.append(encode_num(3))
-    return True
+    return op_NUM(num=3, **kwargs)
 
 
-def op_4(stack):
+def op_4(**kwargs):
     """Push the number 4 onto the stack."""
-    stack.append(encode_num(4))
-    return True
+    return op_NUM(num=4, **kwargs)
 
 
-def op_5(stack):
+def op_5(**kwargs):
     """Push the number 5 onto the stack."""
-    stack.append(encode_num(5))
-    return True
+    return op_NUM(num=5, **kwargs)
 
 
-def op_6(stack):
+def op_6(**kwargs):
     """Push the number 6 onto the stack."""
-    stack.append(encode_num(6))
-    return True
+    return op_NUM(num=6, **kwargs)
 
 
-def op_7(stack):
+def op_7(**kwargs):
     """Push the number 7 onto the stack."""
-    stack.append(encode_num(7))
-    return True
+    return op_NUM(num=7, **kwargs)
 
 
-def op_8(stack):
+def op_8(**kwargs):
     """Push the number 8 onto the stack."""
-    stack.append(encode_num(8))
-    return True
+    return op_NUM(num=8, **kwargs)
 
 
-def op_9(stack):
+def op_9(**kwargs):
     """Push the number 9 onto the stack."""
-    stack.append(encode_num(9))
-    return True
+    return op_NUM(num=9, **kwargs)
 
 
-def op_10(stack):
+def op_10(**kwargs):
     """Push the number 10 onto the stack."""
-    stack.append(encode_num(10))
-    return True
+    return op_NUM(num=10, **kwargs)
 
 
-def op_11(stack):
+def op_11(**kwargs):
     """Push the number 11 onto the stack."""
-    stack.append(encode_num(11))
-    return True
+    return op_NUM(num=11, **kwargs)
 
 
-def op_12(stack):
+def op_12(**kwargs):
     """Push the number 12 onto the stack."""
-    stack.append(encode_num(12))
-    return True
+    return op_NUM(num=12, **kwargs)
 
 
-def op_13(stack):
+def op_13(**kwargs):
     """Push the number 13 onto the stack."""
-    stack.append(encode_num(13))
-    return True
+    return op_NUM(num=13, **kwargs)
 
 
-def op_14(stack):
+def op_14(**kwargs):
     """Push the number 14 onto the stack."""
-    stack.append(encode_num(14))
-    return True
+    return op_NUM(num=14, **kwargs)
 
 
-def op_15(stack):
+def op_15(**kwargs):
     """Push the number 15 onto the stack."""
-    stack.append(encode_num(15))
-    return True
+    return op_NUM(num=15, **kwargs)
 
 
-def op_16(stack):
+def op_16(**kwargs):
     """Push the number 16 onto the stack."""
-    stack.append(encode_num(16))
-    return True
+    return op_NUM(num=16, **kwargs)
 
 
-def op_1negate(stack):
+def op_1negate(**kwargs):
     """Push the number -1 onto the stack."""
-    stack.append(encode_num(-1))
-    return True
+    return op_NUM(num=-1, **kwargs)
 
 
 # FLOW CONTROL FUNCTIONS

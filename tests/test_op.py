@@ -34,109 +34,109 @@ def test_encode_num():
 
 def test_op_0():
     stack = []
-    assert op_0(stack) == True
+    assert op_0(stack=stack) == True
     assert stack == [encode_num(0)]
 
 
 def test_op_1():
     stack = []
-    assert op_1(stack) == True
+    assert op_1(stack=stack) == True
     assert stack == [encode_num(1)]
 
 
 def test_op_2():
     stack = []
-    assert op_2(stack) == True
+    assert op_2(stack=stack) == True
     assert stack == [encode_num(2)]
 
 
 def test_op_3():
     stack = []
-    assert op_3(stack) == True
+    assert op_3(stack=stack) == True
     assert stack == [encode_num(3)]
 
 
 def test_op_4():
     stack = []
-    assert op_4(stack) == True
+    assert op_4(stack=stack) == True
     assert stack == [encode_num(4)]
 
 
 def test_op_5():
     stack = []
-    assert op_5(stack) == True
+    assert op_5(stack=stack) == True
     assert stack == [encode_num(5)]
 
 
 def test_op_6():
     stack = []
-    assert op_6(stack) == True
+    assert op_6(stack=stack) == True
     assert stack == [encode_num(6)]
 
 
 def test_op_7():
     stack = []
-    assert op_7(stack) == True
+    assert op_7(stack=stack) == True
     assert stack == [encode_num(7)]
 
 
 def test_op_8():
     stack = []
-    assert op_8(stack) == True
+    assert op_8(stack=stack) == True
     assert stack == [encode_num(8)]
 
 
 def test_op_9():
     stack = []
-    assert op_9(stack) == True
+    assert op_9(stack=stack) == True
     assert stack == [encode_num(9)]
 
 
 def test_op_10():
     stack = []
-    assert op_10(stack) == True
+    assert op_10(stack=stack) == True
     assert stack == [encode_num(10)]
 
 
 def test_op_11():
     stack = []
-    assert op_11(stack) == True
+    assert op_11(stack=stack) == True
     assert stack == [encode_num(11)]
 
 
 def test_op_12():
     stack = []
-    assert op_12(stack) == True
+    assert op_12(stack=stack) == True
     assert stack == [encode_num(12)]
 
 
 def test_op_13():
     stack = []
-    assert op_13(stack) == True
+    assert op_13(stack=stack) == True
     assert stack == [encode_num(13)]
 
 
 def test_op_14():
     stack = []
-    assert op_14(stack) == True
+    assert op_14(stack=stack) == True
     assert stack == [encode_num(14)]
 
 
 def test_op_15():
     stack = []
-    assert op_15(stack) == True
+    assert op_15(stack=stack) == True
     assert stack == [encode_num(15)]
 
 
 def test_op_16():
     stack = []
-    assert op_16(stack) == True
+    assert op_16(stack=stack) == True
     assert stack == [encode_num(16)]
 
 
 def test_op_1negate():
     stack = []
-    assert op_1negate(stack) == True
+    assert op_1negate(stack=stack) == True
     assert stack == [encode_num(-1)]
 
 

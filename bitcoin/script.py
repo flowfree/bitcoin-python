@@ -12,6 +12,9 @@ class Script(object):
         else:
             self.cmds = cmds
 
+    def __add__(self, other):
+        return Script(self.cmds + other.cmds)
+
     @staticmethod
     def parse(stream):
         """
@@ -70,3 +73,36 @@ class Script(object):
 
         length = len(result)
         return encode_varints(length) + result
+
+    def evaluate(self, z):
+        cmds = self.cmds[:]
+        stack = []
+        altstack = []
+        while len(cmds) > 0:
+            cmd = cmds.pop(0)
+            if type(cmd) == int:
+                operation = OP_CODE_FUNCTIONS[cmd]
+                if cmd in [OP_IF, OP_NOTIF]:
+                    if not operation(stack, cmds):
+                        print(f'Bad op: {cmd}')
+                        return False
+                elif cmd in [OP_TOALTSTACK, OP_FROMALTSTACK]:
+                    if not operation(stack, altstack):
+                        print(f'Bad op: {cmd}')
+                        return False
+                elif cmd in [OP_CHECKSIG, OP_CHECKSIGVERIFY, 
+                             OP_CHECKMULTISIG, OP_CHECKMULTISIGVERIFY]:
+                    if not operation(stack, z):
+                        print(f'Bad op: {cmd}')
+                        return False
+                else:
+                    if not operation(stack):
+                        print(f'Bad op: {cmd}')
+                        return False
+            else:
+                stack.append(cmd)
+        if len(stack) == 0:
+            return False
+        if stack.pop() == b'':
+            return False
+        return True
