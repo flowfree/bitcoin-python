@@ -1,12 +1,7 @@
 import pytest 
 
 from bitcoin import helpers
-from bitcoin.op import (
-    decode_num, encode_num,
-    op_0, op_1, op_2, op_3, op_4, op_5, op_6, op_7, op_8,
-    op_9, op_10, op_11, op_12, op_13, op_14, op_15, op_16,
-    op_dup, op_hash160, op_hash256
-)
+from bitcoin.op import *
 
 
 def test_decode_num():
@@ -176,3 +171,141 @@ class TestOpHash256:
 
         assert op_hash256(stack) == True
         assert stack == [helpers.hash256(x)]
+
+
+class TestOpIf:
+    def test_one(self):
+        stack = [encode_num(1)]
+        commands = [OP_IF, OP_2, OP_ENDIF, OP_3]
+        _ = commands.pop(0)
+
+        assert op_if(stack, commands) == True
+        assert stack == []
+        assert commands == [OP_2, OP_3]
+
+    def test_two(self):
+        stack = [encode_num(1)]
+        commands = [OP_IF, OP_2, OP_ELSE, OP_3, OP_ENDIF, OP_4]
+        _ = commands.pop(0)
+
+        assert op_if(stack, commands) == True
+        assert stack == []
+        assert commands == [OP_2, OP_4]
+
+    def test_three(self):
+        stack = [encode_num(0)]
+        commands = [OP_IF, OP_2, OP_ELSE, OP_3, OP_ENDIF, OP_4]
+        _ = commands.pop(0)
+
+        assert op_if(stack, commands) == True
+        assert stack == []
+        assert commands == [OP_3, OP_4]
+
+    def test_four(self):
+        stack = [
+            encode_num(0), 
+            encode_num(1),
+        ]
+        commands = [
+            OP_IF,
+                OP_2,
+            OP_ELSE,
+                OP_3,
+                OP_IF,
+                    OP_4,
+                OP_ELSE,
+                    OP_5,
+                OP_ENDIF,
+            OP_ENDIF,
+            OP_6,
+        ]
+        _ = commands.pop(0)
+
+        assert op_if(stack, commands) == True
+        assert stack == [encode_num(0)]
+        assert commands == [
+            OP_2, 
+            OP_6,
+        ]
+
+    def test_five(self):
+        stack = [
+            encode_num(1), 
+            encode_num(0),
+        ]
+        commands = [
+            OP_IF,
+                OP_2,
+            OP_ELSE,
+                OP_3,
+                OP_IF,
+                    OP_4,
+                OP_ELSE,
+                    OP_5,
+                OP_ENDIF,
+            OP_ENDIF,
+            OP_6,
+        ]
+        _ = commands.pop(0)
+
+        assert op_if(stack, commands) == True
+        assert stack == [encode_num(1)]
+        assert commands == [
+            OP_3,
+            OP_IF,
+                OP_4,
+            OP_ELSE,
+                OP_5,
+            OP_ENDIF,
+            OP_6,
+        ]
+
+    def test_six(self):
+        stack = [
+            encode_num(0), 
+            encode_num(1),
+        ]
+        commands = [
+            OP_IF,
+                OP_10,
+                OP_IF,
+                    OP_11,
+                OP_ELSE,
+                    OP_12,
+                OP_ENDIF,
+            OP_ELSE,
+                OP_13,
+            OP_ENDIF,
+            OP_14,
+        ]
+        _ = commands.pop(0)
+
+        assert op_if(stack, commands) == True
+        assert stack == [encode_num(0)]
+        assert commands == [
+            OP_10,
+            OP_IF,
+                OP_11,
+            OP_ELSE,
+                OP_12,
+            OP_ENDIF,
+            OP_14,
+        ]
+
+    def test_invalid_stack(self):
+        stack = []
+        commands = [OP_IF, OP_1, OP_ENDIF]
+        _ = commands.pop(0)
+
+        assert op_if(stack, commands) == False
+
+    def test_invalid_script(self):
+        stack = [encode_num(1)]
+        tests = [
+            [OP_IF, OP_1, OP_2],
+            [OP_IF, OP_IF, OP_1, OP_ENDIF],
+            [OP_IF, OP_1, OP_IF, OP_2, OP_ELSE, OP_ENDIF],
+        ]
+        for test in tests:
+            _ = test.pop(0)
+            assert op_if(stack, test) == False
