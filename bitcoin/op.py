@@ -367,6 +367,30 @@ def op_2swap():
     raise NotImplementedError
 
 
+# SPLICE FUNCTIONS
+# ----------------------------------------------------------------------------
+
+
+def op_cat():
+    raise NotImplementedError
+
+
+def op_substr():
+    raise NotImplementedError
+
+
+def op_left():
+    raise NotImplementedError
+
+
+def op_right():
+    raise NotImplementedError
+
+
+def op_size():
+    raise NotImplementedError
+
+
 # CRYPTO FUNCTIONS
 # ----------------------------------------------------------------------------
 
@@ -435,6 +459,13 @@ OP_CODE_FUNCTIONS = {
     OP_2OVER: op_2over,
     OP_2ROT: op_2rot,
     OP_2SWAP: op_2swap,
+
+    # Splice functions
+    OP_CAT: op_cat,
+    OP_SUBSTR: op_substr,
+    OP_LEFT: op_left,
+    OP_RIGHT: op_right,
+    OP_SIZE: op_size,
 
     # Crypto functions
     OP_HASH160: op_hash160,
