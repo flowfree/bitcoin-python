@@ -265,7 +265,7 @@ def op_hash256(stack):
     return True
 
 
-def op_if(stack, commands):
+def op_if(stack, commands, stackval=True):
     if len(stack) < 1:
         return False
     if_commands = []
@@ -295,10 +295,14 @@ def op_if(stack, commands):
 
     element = stack.pop()
     if decode_num(element) == 0:
-        commands[:0] = else_commands
+        commands[:0] = else_commands if stackval else if_commands
     else:
-        commands[:0] = if_commands
+        commands[:0] = if_commands if stackval else else_commands
     return True
+
+
+def op_notif(stack, commands):
+    return op_if(stack, commands, stackval=False)
 
 
 def op_nop():

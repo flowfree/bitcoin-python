@@ -309,3 +309,46 @@ class TestOpIf:
         for test in tests:
             _ = test.pop(0)
             assert op_if(stack, test) == False
+
+
+class TestOpNotIf:
+    def test_one(self):
+        stack = [encode_num(0)]
+        commands = [OP_NOTIF, OP_2, OP_ENDIF, OP_3]
+        _ = commands.pop(0)
+
+        assert op_notif(stack, commands) == True
+        assert stack == []
+        assert commands == [OP_2, OP_3]
+
+    def test_two(self):
+        stack = [encode_num(1)]
+        commands = [OP_NOTIF, OP_2, OP_ENDIF, OP_3]
+        _ = commands.pop(0)
+
+        assert op_notif(stack, commands) == True
+        assert stack == []
+        assert commands == [OP_3]
+
+    def test_three(self):
+        stack = [encode_num(1)]
+        commands = [
+            OP_NOTIF, 
+                OP_2, 
+            OP_ELSE, 
+                OP_IF, 
+                    OP_3, 
+                OP_ENDIF, 
+            OP_ENDIF, 
+            OP_4,
+        ]
+        _ = commands.pop(0)
+
+        assert op_notif(stack, commands) == True
+        assert stack == []
+        assert commands == [
+            OP_IF, 
+                OP_3, 
+            OP_ENDIF, 
+            OP_4,
+        ]
