@@ -134,6 +134,12 @@ def test_op_16():
     assert stack == [encode_num(16)]
 
 
+def test_op_1negate():
+    stack = []
+    assert op_1negate(stack) == True
+    assert stack == [encode_num(-1)]
+
+
 class TestOpDup:
     def test_stack_is_empty(self):
         stack = []

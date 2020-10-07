@@ -140,105 +140,115 @@ def decode_num(element):
         return result
 
 
+# Value-pushing functions
+# -------------------------------------------------------------------------
+
+
 def op_0(stack):
-    """0x00"""
+    """Push an empty array of bytes onto the stack."""
     stack.append(encode_num(0))
     return True
 
 
 def op_1(stack):
-    """0x51"""
+    """Push the number 1 onto the stack."""
     stack.append(encode_num(1))
     return True
 
 
 def op_2(stack):
-    """0x52"""
+    """Push the number 2 onto the stack."""
     stack.append(encode_num(2))
     return True
 
 
 def op_3(stack):
-    """0x53"""
+    """Push the number 3 onto the stack."""
     stack.append(encode_num(3))
     return True
 
 
 def op_4(stack):
-    """0x54"""
+    """Push the number 4 onto the stack."""
     stack.append(encode_num(4))
     return True
 
 
 def op_5(stack):
-    """0x55"""
+    """Push the number 5 onto the stack."""
     stack.append(encode_num(5))
     return True
 
 
 def op_6(stack):
-    """0x56"""
+    """Push the number 6 onto the stack."""
     stack.append(encode_num(6))
     return True
 
 
 def op_7(stack):
-    """0x57"""
+    """Push the number 7 onto the stack."""
     stack.append(encode_num(7))
     return True
 
 
 def op_8(stack):
-    """0x58"""
+    """Push the number 8 onto the stack."""
     stack.append(encode_num(8))
     return True
 
 
 def op_9(stack):
-    """0x59"""
+    """Push the number 9 onto the stack."""
     stack.append(encode_num(9))
     return True
 
 
 def op_10(stack):
-    """0x5a"""
+    """Push the number 10 onto the stack."""
     stack.append(encode_num(10))
     return True
 
 
 def op_11(stack):
-    """0x5b"""
+    """Push the number 11 onto the stack."""
     stack.append(encode_num(11))
     return True
 
 
 def op_12(stack):
-    """0x5c"""
+    """Push the number 12 onto the stack."""
     stack.append(encode_num(12))
     return True
 
 
 def op_13(stack):
-    """0x5d"""
+    """Push the number 13 onto the stack."""
     stack.append(encode_num(13))
     return True
 
 
 def op_14(stack):
-    """0x5e"""
+    """Push the number 14 onto the stack."""
     stack.append(encode_num(14))
     return True
 
 
 def op_15(stack):
-    """0x5f"""
+    """Push the number 15 onto the stack."""
     stack.append(encode_num(15))
     return True
 
 
 def op_16(stack):
-    """0x60"""
+    """Push the number 16 onto the stack."""
     stack.append(encode_num(16))
+    return True
+
+
+def op_1negate(stack):
+    """Push the number -1 onto the stack."""
+    stack.append(encode_num(-1))
     return True
 
 
@@ -339,6 +349,7 @@ OP_CODE_FUNCTIONS = {
     OP_14: op_14,
     OP_15: op_15,
     OP_16: op_16,
+    OP_1NEGATE: op_1negate,
     OP_NOP: op_nop,
     OP_IF: op_if,
     OP_DUP: op_dup,
