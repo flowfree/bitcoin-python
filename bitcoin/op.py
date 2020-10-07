@@ -372,22 +372,68 @@ def op_2swap():
 
 
 def op_cat():
-    raise NotImplementedError
+    """Concatenates two strings. DISABLED"""
+    return False
 
 
 def op_substr():
-    raise NotImplementedError
+    """Returns a section of a string. DISABLED"""
+    return False
 
 
 def op_left():
-    raise NotImplementedError
+    """
+    Keeps only characters left of the specified point in a string. DISABLED
+    """
+    return False
 
 
 def op_right():
-    raise NotImplementedError
+    """
+    Keeps only characters right of the specified point in a string. DISABLED
+    """
+    return False
 
 
 def op_size():
+    """
+    Pushes the string length of the top element of the stack 
+    (without popping it).
+    """
+    raise NotImplementedError
+
+
+# BITWISE LOGIC
+# ----------------------------------------------------------------------------
+
+
+def op_invert():
+    """Flips all of the bits in the input. DISABLED"""
+    return False
+
+
+def op_and():
+    """Boolean and between each bit in the inputs. DISABLED"""
+    return False
+
+
+def op_or():
+    """Boolean or between each bit in the inputs. DISABLED"""
+    return False
+
+
+def op_xor():
+    """	Boolean exclusive or between each bit in the inputs. DISABLED"""
+    return False
+
+
+def op_equal():
+    """Returns 1 if the inputs are exactly equal, 0 otherwise."""
+    raise NotImplementedError
+
+
+def op_equalverify():
+    """	Same as OP_EQUAL, but runs OP_VERIFY afterward."""
     raise NotImplementedError
 
 
@@ -466,6 +512,14 @@ OP_CODE_FUNCTIONS = {
     OP_LEFT: op_left,
     OP_RIGHT: op_right,
     OP_SIZE: op_size,
+
+    # Bitwise logic functions
+    OP_INVERT: op_invert,
+    OP_AND: op_and,
+    OP_OR: op_or,
+    OP_XOR: op_xor,
+    OP_EQUAL: op_equal,
+    OP_EQUALVERIFY: op_equalverify,
 
     # Crypto functions
     OP_HASH160: op_hash160,
