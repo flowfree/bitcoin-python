@@ -176,7 +176,12 @@ class TestOpHash256:
 class TestOpIf:
     def test_one(self):
         stack = [encode_num(1)]
-        commands = [OP_IF, OP_2, OP_ENDIF, OP_3]
+        commands = [
+            OP_IF, 
+                OP_2, 
+            OP_ENDIF, 
+            OP_3,
+        ]
         _ = commands.pop(0)
 
         assert op_if(stack, commands) == True
@@ -185,7 +190,14 @@ class TestOpIf:
 
     def test_two(self):
         stack = [encode_num(1)]
-        commands = [OP_IF, OP_2, OP_ELSE, OP_3, OP_ENDIF, OP_4]
+        commands = [
+            OP_IF, 
+                OP_2, 
+            OP_ELSE, 
+                OP_3, 
+            OP_ENDIF, 
+            OP_4,
+        ]
         _ = commands.pop(0)
 
         assert op_if(stack, commands) == True
@@ -194,7 +206,14 @@ class TestOpIf:
 
     def test_three(self):
         stack = [encode_num(0)]
-        commands = [OP_IF, OP_2, OP_ELSE, OP_3, OP_ENDIF, OP_4]
+        commands = [
+            OP_IF, 
+                OP_2, 
+            OP_ELSE, 
+                OP_3, 
+            OP_ENDIF, 
+            OP_4,
+        ]
         _ = commands.pop(0)
 
         assert op_if(stack, commands) == True
@@ -294,7 +313,11 @@ class TestOpIf:
 
     def test_invalid_stack(self):
         stack = []
-        commands = [OP_IF, OP_1, OP_ENDIF]
+        commands = [
+            OP_IF, 
+                OP_1, 
+            OP_ENDIF,
+        ]
         _ = commands.pop(0)
 
         assert op_if(stack, commands) == False
@@ -314,7 +337,12 @@ class TestOpIf:
 class TestOpNotIf:
     def test_one(self):
         stack = [encode_num(0)]
-        commands = [OP_NOTIF, OP_2, OP_ENDIF, OP_3]
+        commands = [
+            OP_NOTIF, 
+                OP_2, 
+            OP_ENDIF, 
+            OP_3,
+        ]
         _ = commands.pop(0)
 
         assert op_notif(stack, commands) == True
@@ -323,7 +351,12 @@ class TestOpNotIf:
 
     def test_two(self):
         stack = [encode_num(1)]
-        commands = [OP_NOTIF, OP_2, OP_ENDIF, OP_3]
+        commands = [
+            OP_NOTIF, 
+                OP_2, 
+            OP_ENDIF, 
+            OP_3,
+        ]
         _ = commands.pop(0)
 
         assert op_notif(stack, commands) == True

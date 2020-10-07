@@ -310,6 +310,10 @@ def op_nop():
     return True
 
 
+def op_return():
+    return False
+
+
 def op_verify(stack):
     if len(stack) < 1:
         return False
@@ -340,4 +344,6 @@ OP_CODE_FUNCTIONS = {
     OP_DUP: op_dup,
     OP_HASH160: op_hash160,
     OP_HASH256: op_hash256,
+    OP_RETURN: op_return,
+    OP_VERIFY: op_verify,
 }
