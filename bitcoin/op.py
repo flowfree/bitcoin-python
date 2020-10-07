@@ -310,6 +310,13 @@ def op_nop():
     return True
 
 
+def op_verify(stack):
+    if len(stack) < 1:
+        return False
+    element = stack.pop()
+    return decode_num(element) != 0
+
+
 OP_CODE_FUNCTIONS = {
     OP_0: op_0,
     OP_1: op_1,

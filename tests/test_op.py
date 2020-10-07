@@ -352,3 +352,11 @@ class TestOpNotIf:
             OP_ENDIF, 
             OP_4,
         ]
+
+
+def test_op_verify():
+    stack = [encode_num(1)]
+    assert op_verify(stack) == True
+
+    stack = [encode_num(0)]
+    assert op_verify(stack) == False
