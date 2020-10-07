@@ -2,7 +2,6 @@ import pytest
 
 from bitcoin import helpers
 from bitcoin.op import (
-    OP_CODE_FUNCTIONS,
     op_dup, op_hash160, op_hash256
 )
 

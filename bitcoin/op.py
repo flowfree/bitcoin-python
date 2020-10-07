@@ -22,10 +22,3 @@ def op_hash256(stack):
     element = stack.pop()
     stack.append(hash256(element))
     return True
-
-
-OP_CODE_FUNCTIONS = {
-    0x76: op_dup,
-    0xa9: op_hash160,
-    0xaa: op_hash256,
-}

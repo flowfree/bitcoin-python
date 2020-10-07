@@ -2,6 +2,9 @@ from .helpers import (
     encode_varints, int_to_little_endian, little_endian_to_int, 
     read_varints
 )
+from .op import (
+    op_dup, op_hash160, op_hash256
+)
 
 
 OP_0 = 0x00
@@ -102,6 +105,12 @@ OP_CHECKMULTISIGVERIFY = 0xaf
 OP_CHECKLOCKTIMEVERIFY = 0xb1
 OP_CHECKSEQUENCEVERIFY = 0xb2
 
+OP_CODE_FUNCTIONS = {
+    0x76: op_dup,
+    0xa9: op_hash160,
+    0xaa: op_hash256,
+}
+
 
 class Script(object):
     def __init__(self, cmds=None):
@@ -124,7 +133,7 @@ class Script(object):
             count += 1
             current_byte = current[0]
             if current_byte > OP_0 and current_byte < OP_PUSHDATA1:
-                # Number between 1-75, the next n bytes are an element
+                # For a number between 1-75, the next n bytes are an element
                 n = current_byte
                 cmds.append(stream.read(n))
                 count += n
@@ -142,9 +151,9 @@ class Script(object):
                 # We have an opcode to store
                 op_code = current_byte
                 cmds.append(op_code)
-        
         if count != length:
             raise SyntaxError('Parsing script failed.')
+
         return Script(cmds)
 
     def serialize(self):
