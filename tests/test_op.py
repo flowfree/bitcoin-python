@@ -1,6 +1,8 @@
 import pytest 
 
-from bitcoin.exceptions import InsufficientStackItems, ScriptError
+from bitcoin.exceptions import (
+    InsufficientStackItems, InvalidTransaction, ScriptError
+)
 from bitcoin.helpers import (
     decode_num, encode_num, hash160, hash256, 
 )
@@ -353,7 +355,7 @@ def test_op_verify():
     stack = [encode_num(1)]
     op_verify(stack=stack)
 
-    with pytest.raises(ScriptError):
+    with pytest.raises(InvalidTransaction):
         stack = [encode_num(0)]
         op_verify(stack=stack)
 
@@ -544,6 +546,37 @@ def test_op_2swap():
     stack = [0x01, 0x02, 0x03, 0x04]
     op_2swap(stack=stack)
     assert stack == [0x03, 0x04, 0x01, 0x02]
+
+
+# BITWISE-LOGIC TESTS
+# ----------------------------------------------------------------------------
+
+
+def test_op_equal():
+    with pytest.raises(InsufficientStackItems):
+        stack = [0x09]
+        op_equal(stack=stack)
+
+    stack = [0x09, 0x08] 
+    op_equal(stack=stack)
+    assert stack == [encode_num(0)]
+
+    stack = [0x09, 0x09] 
+    op_equal(stack=stack)
+    assert stack == [encode_num(1)]
+
+
+def test_op_equalverify():
+    with pytest.raises(InsufficientStackItems):
+        stack = [0x09]
+        op_equalverify(stack=stack)
+
+    with pytest.raises(InvalidTransaction):
+        stack = [0x09, 0x08] 
+        op_equalverify(stack=stack)
+
+    stack = [0x09, 0x09] 
+    op_equalverify(stack=stack)
 
 
 # CRYPTO FUNCTIONS TESTS

@@ -1,4 +1,6 @@
-from .exceptions import InsufficientStackItems, ScriptError
+from .exceptions import (
+    InsufficientStackItems, InvalidTransaction, ScriptError
+)
 from .helpers import decode_num, encode_num, hash160, hash256 
 
 
@@ -307,7 +309,7 @@ def op_verify(**kwargs):
         raise InsufficientStackItems
     element = stack.pop()
     if decode_num(element) == 0:
-        raise ScriptError('Top stack value is false.')
+        raise InvalidTransaction
 
 
 def op_return():
@@ -590,18 +592,27 @@ def op_xor():
     raise NotImplementedError
 
 
-def op_equal():
+def op_equal(**kwargs):
     """
     Returns 1 if the inputs are exactly equal, 0 otherwise.
     """
-    raise NotImplementedError
+    stack = kwargs.get('stack')
+    if len(stack) < 2:
+        raise InsufficientStackItems
+    a = stack.pop()
+    b = stack.pop()
+    if a == b:
+        stack.append(encode_num(1))
+    else:
+        stack.append(encode_num(0))
 
 
-def op_equalverify():
+def op_equalverify(**kwargs):
     """	
     Same as OP_EQUAL, but runs OP_VERIFY afterward.
     """
-    raise NotImplementedError
+    op_equal(**kwargs)
+    op_verify(**kwargs)
 
 
 # CRYPTO FUNCTIONS
