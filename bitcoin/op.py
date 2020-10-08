@@ -1,7 +1,7 @@
 import hashlib 
 
 from .exceptions import (
-    InvalidTransaction, ScriptError, StackError
+    InvalidOpCode, InvalidTransaction, ScriptError, StackError
 )
 from .helpers import (
     decode_num, encode_num, hash160, hash256 
@@ -119,7 +119,7 @@ def op_NUM(**kwargs):
     num = kwargs.get('num')
     stack = kwargs.get('stack')
     if num is None or stack is None:
-        raise ScriptError('num and stack are required.')
+        raise StackError('num and stack are required.')
     stack.append(encode_num(num))
 
 
@@ -289,7 +289,7 @@ def op_if(stackval=True, **kwargs):
         current_block.append(command)
 
     if not complete:
-        raise ScriptError('Failed parsing the script.')
+        raise ScriptError
 
     element = stack.pop()
     if decode_num(element) == 0:
@@ -534,28 +534,28 @@ def op_cat():
     """
     Concatenates two strings. DISABLED
     """
-    raise NotImplementedError
+    raise InvalidOpCode
 
 
 def op_substr():
     """
     Returns a section of a string. DISABLED
     """
-    raise NotImplementedError
+    raise InvalidOpCode
 
 
 def op_left():
     """
     Keeps only characters left of the specified point in a string. DISABLED
     """
-    raise NotImplementedError
+    raise InvalidOpCode
 
 
 def op_right():
     """
     Keeps only characters right of the specified point in a string. DISABLED
     """
-    raise NotImplementedError
+    raise InvalidOpCode
 
 
 def op_size():
@@ -574,28 +574,28 @@ def op_invert():
     """
     Flips all of the bits in the input. DISABLED
     """
-    raise NotImplementedError
+    raise InvalidOpCode
 
 
 def op_and():
     """
     Boolean and between each bit in the inputs. DISABLED
     """
-    raise NotImplementedError
+    raise InvalidOpCode
 
 
 def op_or():
     """
     Boolean or between each bit in the inputs. DISABLED
     """
-    raise NotImplementedError
+    raise InvalidOpCode
 
 
 def op_xor():
     """	
     Boolean exclusive or between each bit in the inputs. DISABLED
     """
-    raise NotImplementedError
+    raise InvalidOpCode
 
 
 def op_equal(**kwargs):
