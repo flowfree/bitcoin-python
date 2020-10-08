@@ -292,7 +292,7 @@ class TestOpIf:
             with pytest.raises(ScriptError) as e:
                 _ = test.pop(0)
                 op_if(stack=stack, commands=test)
-            assert str(e.value) == 'Failed parsing the script.'
+            assert str(e.value) == 'Failed evaluating the script.'
 
 
 class TestOpNotIf:
