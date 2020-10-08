@@ -1,35 +1,9 @@
 import pytest 
 
-from bitcoin import helpers
+from bitcoin.helpers import (
+    decode_num, encode_num, hash160, hash256, 
+)
 from bitcoin.op import *
-
-
-def test_decode_num():
-    tests = [
-        (b'', 0),
-        (b'\x01', 1),
-        (b'\x02', 2),
-        (b'\x0a', 10),
-        (b'\x10', 16),
-        (b'\x81', -1),
-        (b'\x8d', -13),
-    ]
-    for x, y in tests:
-        assert decode_num(x) == y
-
-
-def test_encode_num():
-    tests = [
-        (0, b''),
-        (1, b'\x01'),
-        (2, b'\x02'),
-        (10, b'\x0a'),
-        (16, b'\x10'),
-        (-1, b'\x81'),
-        (-13, b'\x8d'),
-    ]
-    for x, y in tests:
-        assert encode_num(x) == y
 
 
 def test_op_0():
@@ -161,7 +135,7 @@ class TestOpHash160:
         stack = [x]
 
         assert op_hash160(stack=stack) == True
-        assert stack == [helpers.hash160(x)]
+        assert stack == [hash160(x)]
 
 
 class TestOpHash256:
@@ -174,7 +148,7 @@ class TestOpHash256:
         stack = [x]
 
         assert op_hash256(stack=stack) == True
-        assert stack == [helpers.hash256(x)]
+        assert stack == [hash256(x)]
 
 
 class TestOpIf:
