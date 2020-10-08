@@ -45,3 +45,31 @@ def test_read_varints():
     for x, y in tests:
         stream = BytesIO(x)
         assert helpers.read_varints(stream) == y
+
+
+def test_decode_num():
+    tests = [
+        (b'', 0),
+        (b'\x01', 1),
+        (b'\x02', 2),
+        (b'\x0a', 10),
+        (b'\x10', 16),
+        (b'\x81', -1),
+        (b'\x8d', -13),
+    ]
+    for x, y in tests:
+        assert helpers.decode_num(x) == y
+
+
+def test_encode_num():
+    tests = [
+        (0, b''),
+        (1, b'\x01'),
+        (2, b'\x02'),
+        (10, b'\x0a'),
+        (16, b'\x10'),
+        (-1, b'\x81'),
+        (-13, b'\x8d'),
+    ]
+    for x, y in tests:
+        assert helpers.encode_num(x) == y

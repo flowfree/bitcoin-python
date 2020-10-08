@@ -2,7 +2,10 @@ from io import BytesIO
 
 import requests 
 
-from .helpers import hash256, little_endian_to_int, read_varints
+from .helpers import (
+    encode_varints, hash256, int_to_little_endian, little_endian_to_int, 
+    read_varints
+)
 from .script import Script
 
 
@@ -59,7 +62,18 @@ class Tx(object):
         return Tx(version, inputs, outputs, locktime, testnet=testnet)
 
     def serialize(self):
-        raise NotImplementedError
+        """
+        Return the byte serialization of the transaction.
+        """
+        result = int_to_little_endian(self.version, 4)
+        result += encode_varints(len(self.tx_ins))
+        for tx_in in self.tx_ins:
+            result += tx_in.serialize()
+        result += encode_varints(len(self.tx_outs))
+        for tx_out in self.tx_outs:
+            result += tx_out.serialize()
+        result += int_to_little_endian(self.locktime, 4)
+        return result
 
 
 class TxIn(object):
@@ -97,7 +111,14 @@ class TxIn(object):
         return tx.tx_outs[self.prev_index].script_pubkey
 
     def serialize(self):
-        raise NotImplementedError
+        """
+        Returns the byte serialization of the transaction input.
+        """
+        result = self.prev_tx[::-1]
+        result += int_to_little_endian(self.prev_index, 4)
+        result += self.script_sig.serialize()
+        result += int_to_little_endian(self.sequence, 4)
+        return result
 
 
 class TxOut(object):
@@ -111,13 +132,17 @@ class TxOut(object):
     @staticmethod
     def parse(stream, testnet=False):
         amount = little_endian_to_int(stream.read(8))
-        length = read_varints(stream)
-        script_pubkey = stream.read(length)
+        script_pubkey = Script.parse(stream)
 
         return TxOut(amount, script_pubkey)
 
     def serialize(self):
-        raise NotImplementedError
+        """
+        Return the byte serialization of the transaction output.
+        """
+        result = int_to_little_endian(self.amount, 8)
+        result += self.script_pubkey.serialize()
+        return result
 
 
 class TxFetcher:

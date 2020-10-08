@@ -2,21 +2,26 @@ from io import BytesIO
 
 import pytest
 
+from bitcoin.script import Script
 from bitcoin.tx import Tx, TxIn, TxOut
 
 
 @pytest.fixture
-def stream():
-    raw_tx = bytes.fromhex('0100000001813f79011acb80925dfe69b3def355fe914bd1' \
-                           'd96a3f5f71bf8303c6a989c7d1000000006b483045022100' \
-                           'ed81ff192e75a3fd2304004dcadb746fa5e24c5031ccfcf2' \
-                           '1320b0277457c98f02207a986d955c6e0cb35d446a89d3f5' \
-                           '6100f4d7f67801c31967743a9c8e10615bed01210349fc4e' \
-                           '631e3624a545de3f89f5d8684c7b8138bd94bdd531d2e213' \
-                           'bf016b278afeffffff02a135ef01000000001976a914bc3b' \
-                           '654dca7e56b04dca18f2566cdaf02e8d9ada88ac99c39800' \
-                           '000000001976a9141c4bc762dd5423e332166702cb75f40d' \
-                           'f79fea1288ac19430600')
+def raw_tx():
+    return bytes.fromhex('0100000001813f79011acb80925dfe69b3def355fe914bd1' \
+                         'd96a3f5f71bf8303c6a989c7d1000000006b483045022100' \
+                         'ed81ff192e75a3fd2304004dcadb746fa5e24c5031ccfcf2' \
+                         '1320b0277457c98f02207a986d955c6e0cb35d446a89d3f5' \
+                         '6100f4d7f67801c31967743a9c8e10615bed01210349fc4e' \
+                         '631e3624a545de3f89f5d8684c7b8138bd94bdd531d2e213' \
+                         'bf016b278afeffffff02a135ef01000000001976a914bc3b' \
+                         '654dca7e56b04dca18f2566cdaf02e8d9ada88ac99c39800' \
+                         '000000001976a9141c4bc762dd5423e332166702cb75f40d' \
+                         'f79fea1288ac19430600')
+
+
+@pytest.fixture
+def stream(raw_tx):
     return BytesIO(raw_tx)
 
 
@@ -38,24 +43,27 @@ class TestTx:
 
         assert len(tx.tx_outs) == 2
         assert tx.tx_outs[0].amount == 32454049
-        assert tx.tx_outs[0].script_pubkey == bytes.fromhex('76a914bc3b654dca7e56b04d' \
-                                                            'ca18f2566cdaf02e8d9ada88ac')
+        assert type(tx.tx_outs[0].script_pubkey) == Script
         assert tx.tx_outs[1].amount == 10011545
-        assert tx.tx_outs[1].script_pubkey == bytes.fromhex('76a9141c4bc762dd5423e332' \
-                                                            '166702cb75f40df79fea1288ac')
+        assert type(tx.tx_outs[1].script_pubkey) == Script
 
     def test_parse_locktime(self, stream):
         tx = Tx.parse(stream)
         assert tx.locktime == 410393
 
+    def test_serialize(self, raw_tx, stream):
+        tx = Tx.parse(stream)
+        assert tx.serialize() == raw_tx
+
 
 class TestTxOut:
-    def test_parse(self):
+    def test_parse(self, monkeypatch):
+        monkeypatch.setattr(Script, 'parse', lambda s: Script())
+
         raw_hex = 'a135ef01000000001976a914bc3b654dca7e56b04dca18f2566cdaf02e8d9ada88ac'
         stream = BytesIO(bytes.fromhex(raw_hex))
 
         tx_out = TxOut.parse(stream)
 
         assert tx_out.amount == 32454049
-        assert tx_out.script_pubkey == bytes.fromhex('76a914bc3b654dca7e56b04d' \
-                                                     'ca18f2566cdaf02e8d9ada88ac')
+        assert type(tx_out.script_pubkey) == Script
