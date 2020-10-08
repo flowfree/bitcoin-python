@@ -12,109 +12,109 @@ from bitcoin.op import *
 
 def test_op_0():
     stack = []
-    assert op_0(stack=stack) == True
+    op_0(stack=stack)
     assert stack == [encode_num(0)]
 
 
 def test_op_1():
     stack = []
-    assert op_1(stack=stack) == True
+    op_1(stack=stack)
     assert stack == [encode_num(1)]
 
 
 def test_op_2():
     stack = []
-    assert op_2(stack=stack) == True
+    op_2(stack=stack)
     assert stack == [encode_num(2)]
 
 
 def test_op_3():
     stack = []
-    assert op_3(stack=stack) == True
+    op_3(stack=stack)
     assert stack == [encode_num(3)]
 
 
 def test_op_4():
     stack = []
-    assert op_4(stack=stack) == True
+    op_4(stack=stack)
     assert stack == [encode_num(4)]
 
 
 def test_op_5():
     stack = []
-    assert op_5(stack=stack) == True
+    op_5(stack=stack)
     assert stack == [encode_num(5)]
 
 
 def test_op_6():
     stack = []
-    assert op_6(stack=stack) == True
+    op_6(stack=stack)
     assert stack == [encode_num(6)]
 
 
 def test_op_7():
     stack = []
-    assert op_7(stack=stack) == True
+    op_7(stack=stack)
     assert stack == [encode_num(7)]
 
 
 def test_op_8():
     stack = []
-    assert op_8(stack=stack) == True
+    op_8(stack=stack)
     assert stack == [encode_num(8)]
 
 
 def test_op_9():
     stack = []
-    assert op_9(stack=stack) == True
+    op_9(stack=stack)
     assert stack == [encode_num(9)]
 
 
 def test_op_10():
     stack = []
-    assert op_10(stack=stack) == True
+    op_10(stack=stack)
     assert stack == [encode_num(10)]
 
 
 def test_op_11():
     stack = []
-    assert op_11(stack=stack) == True
+    op_11(stack=stack)
     assert stack == [encode_num(11)]
 
 
 def test_op_12():
     stack = []
-    assert op_12(stack=stack) == True
+    op_12(stack=stack)
     assert stack == [encode_num(12)]
 
 
 def test_op_13():
     stack = []
-    assert op_13(stack=stack) == True
+    op_13(stack=stack)
     assert stack == [encode_num(13)]
 
 
 def test_op_14():
     stack = []
-    assert op_14(stack=stack) == True
+    op_14(stack=stack)
     assert stack == [encode_num(14)]
 
 
 def test_op_15():
     stack = []
-    assert op_15(stack=stack) == True
+    op_15(stack=stack)
     assert stack == [encode_num(15)]
 
 
 def test_op_16():
     stack = []
-    assert op_16(stack=stack) == True
+    op_16(stack=stack)
     assert stack == [encode_num(16)]
 
 
 def test_op_1negate():
     stack = []
-    assert op_1negate(stack=stack) == True
+    op_1negate(stack=stack)
     assert stack == [encode_num(-1)]
 
 
@@ -133,7 +133,8 @@ class TestOpIf:
         ]
         _ = commands.pop(0)
 
-        assert op_if(stack=stack, commands=commands) == True
+        op_if(stack=stack, commands=commands)
+
         assert stack == []
         assert commands == [OP_2, OP_3]
 
@@ -149,7 +150,8 @@ class TestOpIf:
         ]
         _ = commands.pop(0)
 
-        assert op_if(stack=stack, commands=commands) == True
+        op_if(stack=stack, commands=commands)
+
         assert stack == []
         assert commands == [OP_2, OP_4]
 
@@ -165,7 +167,8 @@ class TestOpIf:
         ]
         _ = commands.pop(0)
 
-        assert op_if(stack=stack, commands=commands) == True
+        op_if(stack=stack, commands=commands)
+
         assert stack == []
         assert commands == [OP_3, OP_4]
 
@@ -189,7 +192,8 @@ class TestOpIf:
         ]
         _ = commands.pop(0)
 
-        assert op_if(stack=stack, commands=commands) == True
+        op_if(stack=stack, commands=commands)
+
         assert stack == [encode_num(0)]
         assert commands == [
             OP_2, 
@@ -216,7 +220,8 @@ class TestOpIf:
         ]
         _ = commands.pop(0)
 
-        assert op_if(stack=stack, commands=commands) == True
+        op_if(stack=stack, commands=commands)
+
         assert stack == [encode_num(1)]
         assert commands == [
             OP_3,
@@ -248,7 +253,8 @@ class TestOpIf:
         ]
         _ = commands.pop(0)
 
-        assert op_if(stack=stack, commands=commands) == True
+        op_if(stack=stack, commands=commands)
+
         assert stack == [encode_num(0)]
         assert commands == [
             OP_10,
@@ -269,7 +275,8 @@ class TestOpIf:
         ]
         _ = commands.pop(0)
 
-        assert op_if(stack=stack, commands=commands) == False
+        with pytest.raises(ValueError):
+            op_if(stack=stack, commands=commands)
 
     def test_invalid_script(self):
         stack = [encode_num(1)]
@@ -279,8 +286,9 @@ class TestOpIf:
             [OP_IF, OP_1, OP_IF, OP_2, OP_ELSE, OP_ENDIF],
         ]
         for test in tests:
-            _ = test.pop(0)
-            assert op_if(stack=stack, commands=test) == False
+            with pytest.raises(ValueError):
+                _ = test.pop(0)
+                op_if(stack=stack, commands=test)
 
 
 class TestOpNotIf:
@@ -294,7 +302,8 @@ class TestOpNotIf:
         ]
         _ = commands.pop(0)
 
-        assert op_notif(stack=stack, commands=commands) == True
+        op_notif(stack=stack, commands=commands)
+
         assert stack == []
         assert commands == [OP_2, OP_3]
 
@@ -308,7 +317,8 @@ class TestOpNotIf:
         ]
         _ = commands.pop(0)
 
-        assert op_notif(stack=stack, commands=commands) == True
+        op_notif(stack=stack, commands=commands)
+
         assert stack == []
         assert commands == [OP_3]
 
@@ -326,7 +336,8 @@ class TestOpNotIf:
         ]
         _ = commands.pop(0)
 
-        assert op_notif(stack=stack, commands=commands) == True
+        op_notif(stack=stack, commands=commands)
+
         assert stack == []
         assert commands == [
             OP_IF, 
@@ -338,10 +349,11 @@ class TestOpNotIf:
 
 def test_op_verify():
     stack = [encode_num(1)]
-    assert op_verify(stack=stack) == True
+    op_verify(stack=stack)
 
-    stack = [encode_num(0)]
-    assert op_verify(stack=stack) == False
+    with pytest.raises(ValueError):
+        stack = [encode_num(0)]
+        op_verify(stack=stack)
 
 
 # STACK FUNCTIONS TESTS
@@ -536,27 +548,23 @@ def test_op_2swap():
 # ----------------------------------------------------------------------------
 
 
-class TestOpHash160:
-    def test_stack_is_empty(self):
+def test_op_hash160():
+    with pytest.raises(ValueError):
         stack = []
-        assert op_hash160(stack=stack) == False
+        op_hash160(stack=stack)
 
-    def test_operation(self):
-        x = bytes.fromhex('0001')
-        stack = [x]
-
-        assert op_hash160(stack=stack) == True
-        assert stack == [hash160(x)]
+    x = bytes.fromhex('0001')
+    stack = [x]
+    op_hash160(stack=stack)
+    assert stack == [hash160(x)]
 
 
-class TestOpHash256:
-    def test_stack_is_empty(self):
+def test_op_hash256():
+    with pytest.raises(ValueError):
         stack = []
-        assert op_hash256(stack=stack) == False
+        op_hash256(stack=stack)
 
-    def test_operation(self):
-        x = bytes.fromhex('0001')
-        stack = [x]
-
-        assert op_hash256(stack=stack) == True
-        assert stack == [hash256(x)]
+    x = bytes.fromhex('0001')
+    stack = [x]
+    op_hash256(stack=stack)
+    assert stack == [hash256(x)]

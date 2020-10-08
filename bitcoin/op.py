@@ -110,135 +110,134 @@ def op_NUM(**kwargs):
     num = kwargs.get('num')
     stack = kwargs.get('stack')
     if num is None or stack is None:
-        return False
+        raise ValueError
     stack.append(encode_num(num))
-    return True
 
 
 def op_0(**kwargs):
     """
     Push an empty array of bytes onto the stack.
     """
-    return op_NUM(num=0, **kwargs)
+    op_NUM(num=0, **kwargs)
 
 
 def op_1(**kwargs):
     """
     Push the number 1 onto the stack.
     """
-    return op_NUM(num=1, **kwargs)
+    op_NUM(num=1, **kwargs)
 
 
 def op_2(**kwargs):
     """
     Push the number 2 onto the stack.
     """
-    return op_NUM(num=2, **kwargs)
+    op_NUM(num=2, **kwargs)
 
 
 def op_3(**kwargs):
     """
     Push the number 3 onto the stack.
     """
-    return op_NUM(num=3, **kwargs)
+    op_NUM(num=3, **kwargs)
 
 
 def op_4(**kwargs):
     """
     Push the number 4 onto the stack.
     """
-    return op_NUM(num=4, **kwargs)
+    op_NUM(num=4, **kwargs)
 
 
 def op_5(**kwargs):
     """
     Push the number 5 onto the stack.
     """
-    return op_NUM(num=5, **kwargs)
+    op_NUM(num=5, **kwargs)
 
 
 def op_6(**kwargs):
     """
     Push the number 6 onto the stack.
     """
-    return op_NUM(num=6, **kwargs)
+    op_NUM(num=6, **kwargs)
 
 
 def op_7(**kwargs):
     """
     Push the number 7 onto the stack.
     """
-    return op_NUM(num=7, **kwargs)
+    op_NUM(num=7, **kwargs)
 
 
 def op_8(**kwargs):
     """
     Push the number 8 onto the stack.
     """
-    return op_NUM(num=8, **kwargs)
+    op_NUM(num=8, **kwargs)
 
 
 def op_9(**kwargs):
     """
     Push the number 9 onto the stack.
     """
-    return op_NUM(num=9, **kwargs)
+    op_NUM(num=9, **kwargs)
 
 
 def op_10(**kwargs):
     """
     Push the number 10 onto the stack.
     """
-    return op_NUM(num=10, **kwargs)
+    op_NUM(num=10, **kwargs)
 
 
 def op_11(**kwargs):
     """
     Push the number 11 onto the stack.
     """
-    return op_NUM(num=11, **kwargs)
+    op_NUM(num=11, **kwargs)
 
 
 def op_12(**kwargs):
     """
     Push the number 12 onto the stack.
     """
-    return op_NUM(num=12, **kwargs)
+    op_NUM(num=12, **kwargs)
 
 
 def op_13(**kwargs):
     """
     Push the number 13 onto the stack.
     """
-    return op_NUM(num=13, **kwargs)
+    op_NUM(num=13, **kwargs)
 
 
 def op_14(**kwargs):
     """
     Push the number 14 onto the stack.
     """
-    return op_NUM(num=14, **kwargs)
+    op_NUM(num=14, **kwargs)
 
 
 def op_15(**kwargs):
     """
     Push the number 15 onto the stack.
     """
-    return op_NUM(num=15, **kwargs)
+    op_NUM(num=15, **kwargs)
 
 
 def op_16(**kwargs):
     """
     Push the number 16 onto the stack.
     """
-    return op_NUM(num=16, **kwargs)
+    op_NUM(num=16, **kwargs)
 
 
 def op_1negate(**kwargs):
     """
     Push the number -1 onto the stack.
     """
-    return op_NUM(num=-1, **kwargs)
+    op_NUM(num=-1, **kwargs)
 
 
 # FLOW CONTROL FUNCTIONS
@@ -247,7 +246,7 @@ def op_1negate(**kwargs):
 
 def op_nop(**kwargs):
     """Does nothing"""
-    return True
+    pass
 
 
 def op_if(stackval=True, **kwargs):
@@ -258,7 +257,7 @@ def op_if(stackval=True, **kwargs):
     stack = kwargs.get('stack')
     commands = kwargs.get('commands')
     if stack is None or len(stack) < 1:
-        return False
+        raise ValueError
     if_commands = []
     else_commands = []
     current_block = if_commands
@@ -282,13 +281,12 @@ def op_if(stackval=True, **kwargs):
             current_block.append(command)
 
     if not found:
-        return False
+        raise ValueError
     element = stack.pop()
     if decode_num(element) == 0:
         commands[:0] = else_commands if stackval else if_commands
     else:
         commands[:0] = if_commands if stackval else else_commands
-    return True
 
 
 def op_notif(**kwargs):
@@ -296,7 +294,7 @@ def op_notif(**kwargs):
     Remake the commands array to contain only the NOTIF block if the 
     top stack value is false.
     """
-    return op_if(stackval=False, **kwargs)
+    op_if(stackval=False, **kwargs)
 
 
 def op_verify(**kwargs):
@@ -305,14 +303,17 @@ def op_verify(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 1:
-        return False
+        raise ValueError
     element = stack.pop()
-    return decode_num(element) != 0
+    if decode_num(element) == 0:
+        raise ValueError
 
 
 def op_return():
-    """Marks transaction as invalid."""
-    return False
+    """
+    Marks transaction as invalid.
+    """
+    raise ValueError
 
 
 # STACK FUNCTIONS
@@ -513,27 +514,31 @@ def op_2swap(**kwargs):
 
 
 def op_cat():
-    """Concatenates two strings. DISABLED"""
-    return False
+    """
+    Concatenates two strings. DISABLED
+    """
+    raise NotImplementedError
 
 
 def op_substr():
-    """Returns a section of a string. DISABLED"""
-    return False
+    """
+    Returns a section of a string. DISABLED
+    """
+    raise NotImplementedError
 
 
 def op_left():
     """
     Keeps only characters left of the specified point in a string. DISABLED
     """
-    return False
+    raise NotImplementedError
 
 
 def op_right():
     """
     Keeps only characters right of the specified point in a string. DISABLED
     """
-    return False
+    raise NotImplementedError
 
 
 def op_size():
@@ -549,32 +554,44 @@ def op_size():
 
 
 def op_invert():
-    """Flips all of the bits in the input. DISABLED"""
-    return False
+    """
+    Flips all of the bits in the input. DISABLED
+    """
+    raise NotImplementedError
 
 
 def op_and():
-    """Boolean and between each bit in the inputs. DISABLED"""
-    return False
+    """
+    Boolean and between each bit in the inputs. DISABLED
+    """
+    raise NotImplementedError
 
 
 def op_or():
-    """Boolean or between each bit in the inputs. DISABLED"""
-    return False
+    """
+    Boolean or between each bit in the inputs. DISABLED
+    """
+    raise NotImplementedError
 
 
 def op_xor():
-    """	Boolean exclusive or between each bit in the inputs. DISABLED"""
-    return False
+    """	
+    Boolean exclusive or between each bit in the inputs. DISABLED
+    """
+    raise NotImplementedError
 
 
 def op_equal():
-    """Returns 1 if the inputs are exactly equal, 0 otherwise."""
+    """
+    Returns 1 if the inputs are exactly equal, 0 otherwise.
+    """
     raise NotImplementedError
 
 
 def op_equalverify():
-    """	Same as OP_EQUAL, but runs OP_VERIFY afterward."""
+    """	
+    Same as OP_EQUAL, but runs OP_VERIFY afterward.
+    """
     raise NotImplementedError
 
 
@@ -585,19 +602,17 @@ def op_equalverify():
 def op_hash160(**kwargs):
     stack = kwargs.get('stack')
     if len(stack) < 1:
-        return False
+        raise ValueError
     element = stack.pop()
     stack.append(hash160(element))
-    return True
 
 
 def op_hash256(**kwargs):
     stack = kwargs.get('stack')
     if len(stack) < 1:
-        return False
+        raise ValueError
     element = stack.pop()
     stack.append(hash256(element))
-    return True
 
 
 OP_CODE_FUNCTIONS = {
