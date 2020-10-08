@@ -6,6 +6,8 @@ from .exceptions import (
 from .helpers import (
     decode_num, encode_num, hash160, hash256 
 )
+from .s256_point import S256Point
+from .signature import Signature
 
 
 # Opcode contants
@@ -688,7 +690,30 @@ def op_codeseparator(**kwargs):
 
 
 def op_checksig(**kwargs):
-    raise NotImplementedError
+    z = kwargs.get('z')
+    stack = kwargs.get('stack')
+
+    # Check that there are at least 2 elements on the stack
+    if len(stack) < 2:
+        raise InsufficientStackItems
+
+    # The top element of the stack is the SEC pubkey
+    sec_bin = stack.pop()
+
+    # The next element of the stack is the DER signature
+    # Take off the last byte of the signature as that's the hash_type
+    sig_bin = stack.pop()[:-1]
+
+    # Parse the serialized pubkey and signature into objects
+    signature = Signature.parse(sig_bin)
+    pubkey = S256Point.parse(sec_bin)
+
+    # Verify the signature using S256Point.verify()
+    # Push an encoded 1 or 0 depending on whether the signature verified
+    if pubkey.verify(z, signature):
+        stack.append(encode_num(1))
+    else:
+        stack.append(encode_num(0))
 
 
 def op_checksigverify(**kwargs):
