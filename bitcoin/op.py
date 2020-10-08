@@ -1,7 +1,7 @@
 import hashlib 
 
 from .exceptions import (
-    InsufficientStackItems, InvalidTransaction, ScriptError
+    InvalidTransaction, ScriptError, StackError
 )
 from .helpers import (
     decode_num, encode_num, hash160, hash256 
@@ -267,7 +267,7 @@ def op_if(stackval=True, **kwargs):
     stack = kwargs.get('stack')
     commands = kwargs.get('commands')
     if len(stack) < 1:
-        raise InsufficientStackItems
+        raise StackError
 
     if_block = []
     else_block = []
@@ -312,7 +312,7 @@ def op_verify(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 1:
-        raise InsufficientStackItems
+        raise StackError
     element = stack.pop()
     if decode_num(element) == 0:
         raise InvalidTransaction
@@ -337,7 +337,7 @@ def op_toaltstack(**kwargs):
     stack = kwargs.get('stack')
     altstack = kwargs.get('altstack')
     if len(stack) < 1:
-        raise InsufficientStackItems
+        raise StackError
     altstack.append(stack.pop())
 
 
@@ -349,7 +349,7 @@ def op_fromaltstack(**kwargs):
     stack = kwargs.get('stack')
     altstack = kwargs.get('altstack')
     if len(altstack) < 1:
-        raise InsufficientStackItems
+        raise StackError
     stack.append(altstack.pop())
 
 
@@ -359,7 +359,7 @@ def op_ifdup(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 1:
-        raise InsufficientStackItems
+        raise StackError
     num = decode_num(stack[-1])
     if num != 0:
         stack.append(encode_num(num))
@@ -380,7 +380,7 @@ def op_drop(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 1:
-        raise InsufficientStackItems
+        raise StackError
     stack.pop()
 
 
@@ -390,7 +390,7 @@ def op_dup(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 1:
-        raise InsufficientStackItems
+        raise StackError
     stack.append(stack[-1])
 
 
@@ -400,7 +400,7 @@ def op_nip(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 2:
-        raise InsufficientStackItems
+        raise StackError
     del stack[-2]
 
 
@@ -410,7 +410,7 @@ def op_over(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 2:
-        raise InsufficientStackItems
+        raise StackError
     stack.append(stack[-2])
 
 
@@ -428,7 +428,7 @@ def op_rot(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 3:
-        raise InsufficientStackItems
+        raise StackError
     a, b, c = stack[-3], stack[-2], stack[-1]
     stack[-3], stack[-2], stack[-1] = b, c, a
 
@@ -439,7 +439,7 @@ def op_swap(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 2:
-        raise InsufficientStackItems
+        raise StackError
     a, b = stack[-2], stack[-1]
     stack[-2], stack[-1] = b, a
 
@@ -450,7 +450,7 @@ def op_tuck(stack=[], **kwargs):
     before the second-to-top item.
     """
     if len(stack) < 2:
-        raise InsufficientStackItems
+        raise StackError
     stack.insert(-2, stack[-1])
 
 
@@ -460,7 +460,7 @@ def op_2drop(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 2:
-        raise InsufficientStackItems
+        raise StackError
     stack.pop()
     stack.pop()
 
@@ -471,7 +471,7 @@ def op_2dup(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 2:
-        raise InsufficientStackItems
+        raise StackError
     a, b = stack[-2], stack[-1]
     stack.append(a)
     stack.append(b)
@@ -483,7 +483,7 @@ def op_3dup(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 3:
-        raise InsufficientStackItems
+        raise StackError
     a, b, c = stack[-3], stack[-2], stack[-1]
     stack.append(a)
     stack.append(b)
@@ -496,7 +496,7 @@ def op_2over(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 4:
-        raise InsufficientStackItems
+        raise StackError
     a, b = stack[-4], stack[-3]
     stack.append(a)
     stack.append(b)
@@ -508,7 +508,7 @@ def op_2rot(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 6:
-        raise InsufficientStackItems
+        raise StackError
     a = stack.pop(-5)
     b = stack.pop(-5)
     stack.append(b)
@@ -521,7 +521,7 @@ def op_2swap(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 4:
-        raise InsufficientStackItems
+        raise StackError
     a, b, c, d = stack[-4], stack[-3], stack[-2], stack[-1]
     stack[-4], stack[-3], stack[-2], stack[-1] = c, d, a, b
 
@@ -604,7 +604,7 @@ def op_equal(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 2:
-        raise InsufficientStackItems
+        raise StackError
     a = stack.pop()
     b = stack.pop()
     if a == b:
@@ -631,7 +631,7 @@ def op_ripemd160(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 1:
-        raise InsufficientStackItems
+        raise StackError
     a = stack.pop()
     b = hashlib.new('ripemd160', a).digest()
     stack.append(b)
@@ -643,7 +643,7 @@ def op_sha1(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 1:
-        raise InsufficientStackItems
+        raise StackError
     a = stack.pop()
     b = hashlib.sha1(a).digest()
     stack.append(b)
@@ -655,7 +655,7 @@ def op_sha256(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 1:
-        raise InsufficientStackItems
+        raise StackError
     a = stack.pop()
     b = hashlib.sha256(a).digest()
     stack.append(b)
@@ -667,7 +667,7 @@ def op_hash160(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 1:
-        raise InsufficientStackItems
+        raise StackError
     a = stack.pop()
     b = hash160(a)
     stack.append(b)
@@ -679,7 +679,7 @@ def op_hash256(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 1:
-        raise InsufficientStackItems
+        raise StackError
     a = stack.pop()
     b = hash256(a)
     stack.append(b)
@@ -695,7 +695,7 @@ def op_checksig(**kwargs):
 
     # Check that there are at least 2 elements on the stack
     if len(stack) < 2:
-        raise InsufficientStackItems
+        raise StackError
 
     # The top element of the stack is the SEC pubkey
     sec_bin = stack.pop()

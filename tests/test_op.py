@@ -1,7 +1,7 @@
 import pytest 
 
 from bitcoin.exceptions import (
-    InsufficientStackItems, InvalidTransaction, ScriptError
+    InvalidTransaction, ScriptError, StackError
 )
 from bitcoin.helpers import (
     decode_num, encode_num, hash160, hash256, 
@@ -412,7 +412,7 @@ def test_depth():
 
 
 def test_drop():
-    with pytest.raises(InsufficientStackItems):
+    with pytest.raises(StackError):
         stack = []
         op_drop(stack=stack)
 
@@ -422,7 +422,7 @@ def test_drop():
 
 
 def test_op_dup():
-    with pytest.raises(InsufficientStackItems):
+    with pytest.raises(StackError):
         stack = []
         op_dup(stack=stack)
 
@@ -432,7 +432,7 @@ def test_op_dup():
 
 
 def test_op_nip():
-    with pytest.raises(InsufficientStackItems):
+    with pytest.raises(StackError):
         stack = [0x0001]
         op_nip(stack=stack)
 
@@ -442,7 +442,7 @@ def test_op_nip():
 
 
 def test_op_over():
-    with pytest.raises(InsufficientStackItems):
+    with pytest.raises(StackError):
         stack = [0x0001]
         op_over(stack=stack)
 
@@ -452,7 +452,7 @@ def test_op_over():
 
 
 def test_op_rot():
-    with pytest.raises(InsufficientStackItems):
+    with pytest.raises(StackError):
         stack = [0x0001, 0x0002]
         op_rot(stack=stack)
 
@@ -462,7 +462,7 @@ def test_op_rot():
 
 
 def test_op_swap():
-    with pytest.raises(InsufficientStackItems):
+    with pytest.raises(StackError):
         stack = [0x0001]
         op_swap(stack=stack)
 
@@ -472,7 +472,7 @@ def test_op_swap():
 
 
 def test_op_tuck():
-    with pytest.raises(InsufficientStackItems):
+    with pytest.raises(StackError):
         stack = [0x01]
         op_tuck(stack=stack)
 
@@ -485,7 +485,7 @@ def test_op_tuck():
     assert stack == [0x01, 0x03, 0x02, 0x03]
 
 def test_op_2drop():
-    with pytest.raises(InsufficientStackItems):
+    with pytest.raises(StackError):
         stack = [0x01]
         op_2drop(stack=stack)
 
@@ -499,7 +499,7 @@ def test_op_2drop():
 
 
 def test_op_2dup():
-    with pytest.raises(InsufficientStackItems):
+    with pytest.raises(StackError):
         stack = [0x01]
         op_2dup(stack=stack)
 
@@ -509,7 +509,7 @@ def test_op_2dup():
 
 
 def test_op_3dup():
-    with pytest.raises(InsufficientStackItems):
+    with pytest.raises(StackError):
         stack = [0x01, 0x02]
         op_3dup(stack=stack)
 
@@ -519,7 +519,7 @@ def test_op_3dup():
 
 
 def test_op_2over():
-    with pytest.raises(InsufficientStackItems):
+    with pytest.raises(StackError):
         stack = [0x01, 0x02, 0x03]
         op_2over(stack=stack)
 
@@ -529,7 +529,7 @@ def test_op_2over():
 
 
 def test_op_2rot():
-    with pytest.raises(InsufficientStackItems):
+    with pytest.raises(StackError):
         stack = [0x01, 0x02, 0x03, 0x04, 0x05]
         op_2rot(stack=stack)
 
@@ -539,7 +539,7 @@ def test_op_2rot():
 
 
 def test_op_2swap():
-    with pytest.raises(InsufficientStackItems):
+    with pytest.raises(StackError):
         stack = [0x01, 0x02, 0x03]
         op_2swap(stack=stack)
 
@@ -553,7 +553,7 @@ def test_op_2swap():
 
 
 def test_op_equal():
-    with pytest.raises(InsufficientStackItems):
+    with pytest.raises(StackError):
         stack = [0x09]
         op_equal(stack=stack)
 
@@ -567,7 +567,7 @@ def test_op_equal():
 
 
 def test_op_equalverify():
-    with pytest.raises(InsufficientStackItems):
+    with pytest.raises(StackError):
         stack = [0x09]
         op_equalverify(stack=stack)
 
@@ -584,7 +584,7 @@ def test_op_equalverify():
 
 
 def test_op_ripemd160():
-    with pytest.raises(InsufficientStackItems):
+    with pytest.raises(StackError):
         stack = []
         op_ripemd160(stack=stack)
 
@@ -607,7 +607,7 @@ def test_op_sha256():
 
 
 def test_op_hash160():
-    with pytest.raises(InsufficientStackItems):
+    with pytest.raises(StackError):
         stack = []
         op_hash160(stack=stack)
 
@@ -618,7 +618,7 @@ def test_op_hash160():
 
 
 def test_op_hash256():
-    with pytest.raises(InsufficientStackItems):
+    with pytest.raises(StackError):
         stack = []
         op_hash256(stack=stack)
 
