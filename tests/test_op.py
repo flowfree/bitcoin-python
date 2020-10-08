@@ -1,5 +1,6 @@
 import pytest 
 
+from bitcoin.exceptions import InsufficientStackItems, ScriptError
 from bitcoin.helpers import (
     decode_num, encode_num, hash160, hash256, 
 )
@@ -275,7 +276,7 @@ class TestOpIf:
         ]
         _ = commands.pop(0)
 
-        with pytest.raises(ValueError):
+        with pytest.raises(ScriptError):
             op_if(stack=stack, commands=commands)
 
     def test_invalid_script(self):
@@ -286,9 +287,10 @@ class TestOpIf:
             [OP_IF, OP_1, OP_IF, OP_2, OP_ELSE, OP_ENDIF],
         ]
         for test in tests:
-            with pytest.raises(ValueError):
+            with pytest.raises(ScriptError) as e:
                 _ = test.pop(0)
                 op_if(stack=stack, commands=test)
+            assert str(e.value) == 'Failed parsing the script.'
 
 
 class TestOpNotIf:
@@ -351,7 +353,7 @@ def test_op_verify():
     stack = [encode_num(1)]
     op_verify(stack=stack)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ScriptError):
         stack = [encode_num(0)]
         op_verify(stack=stack)
 
@@ -408,7 +410,7 @@ def test_depth():
 
 
 def test_drop():
-    with pytest.raises(ValueError):
+    with pytest.raises(InsufficientStackItems):
         stack = []
         op_drop(stack=stack)
 
@@ -418,7 +420,7 @@ def test_drop():
 
 
 def test_op_dup():
-    with pytest.raises(ValueError):
+    with pytest.raises(InsufficientStackItems):
         stack = []
         op_dup(stack=stack)
 
@@ -428,7 +430,7 @@ def test_op_dup():
 
 
 def test_op_nip():
-    with pytest.raises(ValueError):
+    with pytest.raises(InsufficientStackItems):
         stack = [0x0001]
         op_nip(stack=stack)
 
@@ -438,7 +440,7 @@ def test_op_nip():
 
 
 def test_op_over():
-    with pytest.raises(ValueError):
+    with pytest.raises(InsufficientStackItems):
         stack = [0x0001]
         op_over(stack=stack)
 
@@ -448,7 +450,7 @@ def test_op_over():
 
 
 def test_op_rot():
-    with pytest.raises(ValueError):
+    with pytest.raises(InsufficientStackItems):
         stack = [0x0001, 0x0002]
         op_rot(stack=stack)
 
@@ -458,7 +460,7 @@ def test_op_rot():
 
 
 def test_op_swap():
-    with pytest.raises(ValueError):
+    with pytest.raises(InsufficientStackItems):
         stack = [0x0001]
         op_swap(stack=stack)
 
@@ -468,7 +470,7 @@ def test_op_swap():
 
 
 def test_op_tuck():
-    with pytest.raises(ValueError):
+    with pytest.raises(InsufficientStackItems):
         stack = [0x01]
         op_tuck(stack=stack)
 
@@ -481,7 +483,7 @@ def test_op_tuck():
     assert stack == [0x01, 0x03, 0x02, 0x03]
 
 def test_op_2drop():
-    with pytest.raises(ValueError):
+    with pytest.raises(InsufficientStackItems):
         stack = [0x01]
         op_2drop(stack=stack)
 
@@ -495,7 +497,7 @@ def test_op_2drop():
 
 
 def test_op_2dup():
-    with pytest.raises(ValueError):
+    with pytest.raises(InsufficientStackItems):
         stack = [0x01]
         op_2dup(stack=stack)
 
@@ -505,7 +507,7 @@ def test_op_2dup():
 
 
 def test_op_3dup():
-    with pytest.raises(ValueError):
+    with pytest.raises(InsufficientStackItems):
         stack = [0x01, 0x02]
         op_3dup(stack=stack)
 
@@ -515,7 +517,7 @@ def test_op_3dup():
 
 
 def test_op_2over():
-    with pytest.raises(ValueError):
+    with pytest.raises(InsufficientStackItems):
         stack = [0x01, 0x02, 0x03]
         op_2over(stack=stack)
 
@@ -525,7 +527,7 @@ def test_op_2over():
 
 
 def test_op_2rot():
-    with pytest.raises(ValueError):
+    with pytest.raises(InsufficientStackItems):
         stack = [0x01, 0x02, 0x03, 0x04, 0x05]
         op_2rot(stack=stack)
 
@@ -535,7 +537,7 @@ def test_op_2rot():
 
 
 def test_op_2swap():
-    with pytest.raises(ValueError):
+    with pytest.raises(InsufficientStackItems):
         stack = [0x01, 0x02, 0x03]
         op_2swap(stack=stack)
 
@@ -549,7 +551,7 @@ def test_op_2swap():
 
 
 def test_op_hash160():
-    with pytest.raises(ValueError):
+    with pytest.raises(InsufficientStackItems):
         stack = []
         op_hash160(stack=stack)
 
@@ -560,7 +562,7 @@ def test_op_hash160():
 
 
 def test_op_hash256():
-    with pytest.raises(ValueError):
+    with pytest.raises(InsufficientStackItems):
         stack = []
         op_hash256(stack=stack)
 

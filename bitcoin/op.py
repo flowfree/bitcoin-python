@@ -1,3 +1,4 @@
+from .exceptions import InsufficientStackItems, ScriptError
 from .helpers import decode_num, encode_num, hash160, hash256 
 
 
@@ -110,7 +111,7 @@ def op_NUM(**kwargs):
     num = kwargs.get('num')
     stack = kwargs.get('stack')
     if num is None or stack is None:
-        raise ValueError
+        raise ScriptError('num and stack are required.')
     stack.append(encode_num(num))
 
 
@@ -254,39 +255,39 @@ def op_if(stackval=True, **kwargs):
     Remake the commands array to contain only the IF block if the 
     top stack value is true.
     """
+
     stack = kwargs.get('stack')
     commands = kwargs.get('commands')
-    if stack is None or len(stack) < 1:
-        raise ValueError
-    if_commands = []
-    else_commands = []
-    current_block = if_commands
-    found = False
+    if len(stack) < 1:
+        raise InsufficientStackItems
+
+    if_block = []
+    else_block = []
+    current_block = if_block
+    complete = False
     num_endifs_needed = 1
     while len(commands) > 0:
         command = commands.pop(0) 
         if command in [OP_IF, OP_NOTIF]:
             num_endifs_needed += 1
-            current_block.append(command)
         elif num_endifs_needed == 1 and command == OP_ELSE:
-            current_block = else_commands
+            current_block = else_block
+            continue
         elif command == OP_ENDIF:
             if num_endifs_needed == 1:
-                found = True
+                complete = True
                 break
-            else:
-                num_endifs_needed -= 1
-                current_block.append(command)
-        else:
-            current_block.append(command)
+            num_endifs_needed -= 1
+        current_block.append(command)
 
-    if not found:
-        raise ValueError
+    if not complete:
+        raise ScriptError('Failed parsing the script.')
+
     element = stack.pop()
     if decode_num(element) == 0:
-        commands[:0] = else_commands if stackval else if_commands
+        commands[:0] = else_block if stackval else if_block
     else:
-        commands[:0] = if_commands if stackval else else_commands
+        commands[:0] = if_block if stackval else else_block
 
 
 def op_notif(**kwargs):
@@ -303,17 +304,17 @@ def op_verify(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 1:
-        raise ValueError
+        raise InsufficientStackItems
     element = stack.pop()
     if decode_num(element) == 0:
-        raise ValueError
+        raise ScriptError('Top stack value is false.')
 
 
 def op_return():
     """
     Marks transaction as invalid.
     """
-    raise ValueError
+    raise ScriptError('OP_RETURN: Transaction is invalid.')
 
 
 # STACK FUNCTIONS
@@ -321,18 +322,26 @@ def op_return():
 
 
 def op_toaltstack(**kwargs):
+    """
+    Puts the input onto the top of the alt stack. 
+    Removes it from the main stack.
+    """
     stack = kwargs.get('stack')
     altstack = kwargs.get('altstack')
     if len(stack) < 1:
-        raise ValueError
+        raise InsufficientStackItems
     altstack.append(stack.pop())
 
 
 def op_fromaltstack(**kwargs):
+    """
+    Puts the input onto the top of the main stack. 
+    Removes it from the alt stack.
+    """
     stack = kwargs.get('stack')
     altstack = kwargs.get('altstack')
     if len(altstack) < 1:
-        raise ValueError
+        raise InsufficientStackItems
     stack.append(altstack.pop())
 
 
@@ -342,7 +351,7 @@ def op_ifdup(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 1:
-        raise ValueError
+        raise InsufficientStackItems
     num = decode_num(stack[-1])
     if num != 0:
         stack.append(encode_num(num))
@@ -363,7 +372,7 @@ def op_drop(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 1:
-        raise ValueError
+        raise InsufficientStackItems
     stack.pop()
 
 
@@ -373,7 +382,7 @@ def op_dup(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 1:
-        raise ValueError
+        raise InsufficientStackItems
     stack.append(stack[-1])
 
 
@@ -383,7 +392,7 @@ def op_nip(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 2:
-        raise ValueError
+        raise InsufficientStackItems
     del stack[-2]
 
 
@@ -393,7 +402,7 @@ def op_over(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 2:
-        raise ValueError
+        raise InsufficientStackItems
     stack.append(stack[-2])
 
 
@@ -411,7 +420,7 @@ def op_rot(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 3:
-        raise ValueError
+        raise InsufficientStackItems
     a, b, c = stack[-3], stack[-2], stack[-1]
     stack[-3], stack[-2], stack[-1] = b, c, a
 
@@ -422,7 +431,7 @@ def op_swap(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 2:
-        raise ValueError
+        raise InsufficientStackItems
     a, b = stack[-2], stack[-1]
     stack[-2], stack[-1] = b, a
 
@@ -433,7 +442,7 @@ def op_tuck(stack=[], **kwargs):
     before the second-to-top item.
     """
     if len(stack) < 2:
-        raise ValueError
+        raise InsufficientStackItems
     stack.insert(-2, stack[-1])
 
 
@@ -443,7 +452,7 @@ def op_2drop(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 2:
-        raise ValueError
+        raise InsufficientStackItems
     stack.pop()
     stack.pop()
 
@@ -454,7 +463,7 @@ def op_2dup(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 2:
-        raise ValueError
+        raise InsufficientStackItems
     a, b = stack[-2], stack[-1]
     stack.append(a)
     stack.append(b)
@@ -466,7 +475,7 @@ def op_3dup(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 3:
-        raise ValueError
+        raise InsufficientStackItems
     a, b, c = stack[-3], stack[-2], stack[-1]
     stack.append(a)
     stack.append(b)
@@ -479,7 +488,7 @@ def op_2over(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 4:
-        raise ValueError
+        raise InsufficientStackItems
     a, b = stack[-4], stack[-3]
     stack.append(a)
     stack.append(b)
@@ -491,7 +500,7 @@ def op_2rot(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 6:
-        raise ValueError
+        raise InsufficientStackItems
     a = stack.pop(-5)
     b = stack.pop(-5)
     stack.append(b)
@@ -504,7 +513,7 @@ def op_2swap(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 4:
-        raise ValueError
+        raise InsufficientStackItems
     a, b, c, d = stack[-4], stack[-3], stack[-2], stack[-1]
     stack[-4], stack[-3], stack[-2], stack[-1] = c, d, a, b
 
@@ -602,7 +611,7 @@ def op_equalverify():
 def op_hash160(**kwargs):
     stack = kwargs.get('stack')
     if len(stack) < 1:
-        raise ValueError
+        raise InsufficientStackItems
     element = stack.pop()
     stack.append(hash160(element))
 
@@ -610,7 +619,7 @@ def op_hash160(**kwargs):
 def op_hash256(**kwargs):
     stack = kwargs.get('stack')
     if len(stack) < 1:
-        raise ValueError
+        raise InsufficientStackItems
     element = stack.pop()
     stack.append(hash256(element))
 
