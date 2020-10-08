@@ -319,24 +319,51 @@ def op_return():
 # ----------------------------------------------------------------------------
 
 
-def op_toaltstack():
-    raise NotImplementedError
+def op_toaltstack(**kwargs):
+    stack = kwargs.get('stack')
+    altstack = kwargs.get('altstack')
+    if len(stack) < 1:
+        raise ValueError
+    altstack.append(stack.pop())
 
 
-def op_fromaltstack():
-    raise NotImplementedError
+def op_fromaltstack(**kwargs):
+    stack = kwargs.get('stack')
+    altstack = kwargs.get('altstack')
+    if len(altstack) < 1:
+        raise ValueError
+    stack.append(altstack.pop())
 
 
-def op_ifdup():
-    raise NotImplementedError
+def op_ifdup(**kwargs):
+    """
+    If the top stack value is true, duplicate it.
+    """
+    stack = kwargs.get('stack')
+    if len(stack) < 1:
+        raise ValueError
+    num = decode_num(stack[-1])
+    if num != 0:
+        stack.append(encode_num(num))
 
 
-def op_depth():
-    raise NotImplementedError
+def op_depth(**kwargs):
+    """
+    Puts the number of stack items onto the stack.
+    """
+    stack = kwargs.get('stack')
+    num = len(stack)
+    stack.append(encode_num(num))
 
 
-def op_drop():
-    raise NotImplementedError
+def op_drop(**kwargs):
+    """
+    Removes the top stack item.
+    """
+    stack = kwargs.get('stack')
+    if len(stack) < 1:
+        raise ValueError
+    stack.pop()
 
 
 def op_dup(**kwargs):
@@ -345,61 +372,140 @@ def op_dup(**kwargs):
     """
     stack = kwargs.get('stack')
     if len(stack) < 1:
-        return False
+        raise ValueError
     stack.append(stack[-1])
-    return True
 
 
-def op_nip():
+def op_nip(**kwargs):
+    """
+    Removes the second-to-top stack item.
+    """
+    stack = kwargs.get('stack')
+    if len(stack) < 2:
+        raise ValueError
+    del stack[-2]
+
+
+def op_over(**kwargs):
+    """
+    Copies the second-to-top stack item to the top.
+    """
+    stack = kwargs.get('stack')
+    if len(stack) < 2:
+        raise ValueError
+    stack.append(stack[-2])
+
+
+def op_pick(**kwargs):
     raise NotImplementedError
 
 
-def op_over():
+def op_roll(**kwargs):
     raise NotImplementedError
 
 
-def op_pick():
-    raise NotImplementedError
+def op_rot(**kwargs):
+    """
+    The top three items on the stack are rotated to the left.
+    """
+    stack = kwargs.get('stack')
+    if len(stack) < 3:
+        raise ValueError
+    a, b, c = stack[-3], stack[-2], stack[-1]
+    stack[-3], stack[-2], stack[-1] = b, c, a
 
 
-def op_roll():
-    raise NotImplementedError
+def op_swap(**kwargs):
+    """
+    The top two items on the stack are swapped.
+    """
+    stack = kwargs.get('stack')
+    if len(stack) < 2:
+        raise ValueError
+    a, b = stack[-2], stack[-1]
+    stack[-2], stack[-1] = b, a
 
 
-def op_rot():
-    raise NotImplementedError
+def op_tuck(stack=[], **kwargs):
+    """
+    The item at the top of the stack is copied and inserted 
+    before the second-to-top item.
+    """
+    if len(stack) < 2:
+        raise ValueError
+    stack.insert(-2, stack[-1])
 
 
-def op_swap():
-    raise NotImplementedError
+def op_2drop(**kwargs):
+    """
+    Removes the top two stack items.
+    """
+    stack = kwargs.get('stack')
+    if len(stack) < 2:
+        raise ValueError
+    stack.pop()
+    stack.pop()
 
 
-def op_tuck():
-    raise NotImplementedError
+def op_2dup(**kwargs):
+    """
+    Duplicates the top two stack items.
+    """
+    stack = kwargs.get('stack')
+    if len(stack) < 2:
+        raise ValueError
+    a, b = stack[-2], stack[-1]
+    stack.append(a)
+    stack.append(b)
 
 
-def op_2drop():
-    raise NotImplementedError
+def op_3dup(**kwargs):
+    """
+    Duplicates the top three stack items.
+    """
+    stack = kwargs.get('stack')
+    if len(stack) < 3:
+        raise ValueError
+    a, b, c = stack[-3], stack[-2], stack[-1]
+    stack.append(a)
+    stack.append(b)
+    stack.append(c)
 
 
-def op_2dup():
-    raise NotImplementedError
+def op_2over(**kwargs):
+    """
+    Copies the pair of items two spaces back in the stack to the front.
+    """
+    stack = kwargs.get('stack')
+    if len(stack) < 4:
+        raise ValueError
+    a, b = stack[-4], stack[-3]
+    stack.append(a)
+    stack.append(b)
 
 
-def op_3dup():
-    raise NotImplementedError
+def op_2rot(**kwargs):
+    """
+    The fifth and sixth items back are moved to the top of the stack.
+    """
+    stack = kwargs.get('stack')
+    if len(stack) < 6:
+        raise ValueError
+    a = stack.pop(-5)
+    b = stack.pop(-5)
+    stack.append(b)
+    stack.append(a)
 
 
-def op_2over():
-    raise NotImplementedError
-
-
-def op_2rot():
-    raise NotImplementedError
-
-
-def op_2swap():
-    raise NotImplementedError
+def op_2swap(**kwargs):
+    """
+    Swaps the top two pairs of items.
+    """
+    stack = kwargs.get('stack')
+    if len(stack) < 4:
+        raise ValueError
+    a, b, c, d = stack[-4], stack[-3], stack[-2], stack[-1]
+    stack[-4], stack[-3], stack[-2], stack[-1] = c, d, a, b
 
 
 # SPLICE FUNCTIONS

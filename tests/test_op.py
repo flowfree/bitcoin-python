@@ -6,6 +6,10 @@ from bitcoin.helpers import (
 from bitcoin.op import *
 
 
+# VALUE-PUSHING TESTS
+# -------------------------------------------------------------------------
+
+
 def test_op_0():
     stack = []
     assert op_0(stack=stack) == True
@@ -114,41 +118,8 @@ def test_op_1negate():
     assert stack == [encode_num(-1)]
 
 
-class TestOpDup:
-    def test_stack_is_empty(self):
-        stack = []
-        assert op_dup(stack=stack) == False
-
-    def test_operation(self):
-        stack = [0x0001]
-        assert op_dup(stack=stack) == True
-        assert stack == [0x0001, 0x0001]
-
-
-class TestOpHash160:
-    def test_stack_is_empty(self):
-        stack = []
-        assert op_hash160(stack=stack) == False
-
-    def test_operation(self):
-        x = bytes.fromhex('0001')
-        stack = [x]
-
-        assert op_hash160(stack=stack) == True
-        assert stack == [hash160(x)]
-
-
-class TestOpHash256:
-    def test_stack_is_empty(self):
-        stack = []
-        assert op_hash256(stack=stack) == False
-
-    def test_operation(self):
-        x = bytes.fromhex('0001')
-        stack = [x]
-
-        assert op_hash256(stack=stack) == True
-        assert stack == [hash256(x)]
+# FLOW CONTROL TESTS
+# ---------------------------------------------------------
 
 
 class TestOpIf:
@@ -371,3 +342,221 @@ def test_op_verify():
 
     stack = [encode_num(0)]
     assert op_verify(stack=stack) == False
+
+
+# STACK FUNCTIONS TESTS
+# ----------------------------------------------------------------------------
+
+
+def test_op_toaltstack():
+    stack = [encode_num(1), encode_num(2)]
+    altstack = []
+
+    op_toaltstack(stack=stack, altstack=altstack)
+
+    assert stack == [encode_num(1)]
+    assert altstack == [encode_num(2)]
+
+
+def test_op_fromaltstack():
+    stack = [encode_num(1)]
+    altstack = [encode_num(2), encode_num(3)]
+
+    op_fromaltstack(stack=stack, altstack=altstack)
+
+    assert stack == [encode_num(1), encode_num(3)]
+    assert altstack == [encode_num(2)]
+
+
+def test_op_ifdup():
+    stack = [encode_num(0)]
+    op_ifdup(stack=stack)
+    assert stack == [encode_num(0)]
+
+    stack = [encode_num(1)]
+    op_ifdup(stack=stack)
+    assert stack == [encode_num(1), encode_num(1)]
+
+
+def test_depth():
+    stack = []
+    op_depth(stack=stack)
+    assert stack == [encode_num(0)]
+
+    stack = [
+        encode_num(10), 
+        encode_num(20),
+    ]
+    op_depth(stack=stack)
+    assert stack == [
+        encode_num(10),
+        encode_num(20),
+        encode_num(2),
+    ]
+
+
+def test_drop():
+    with pytest.raises(ValueError):
+        stack = []
+        op_drop(stack=stack)
+
+    stack = [encode_num(1), encode_num(2)]
+    op_drop(stack=stack)
+    assert stack == [encode_num(1)]
+
+
+def test_op_dup():
+    with pytest.raises(ValueError):
+        stack = []
+        op_dup(stack=stack)
+
+    stack = [0x0001]
+    op_dup(stack=stack)
+    assert stack == [0x0001, 0x0001]
+
+
+def test_op_nip():
+    with pytest.raises(ValueError):
+        stack = [0x0001]
+        op_nip(stack=stack)
+
+    stack = [0x0001, 0x0002]
+    op_nip(stack=stack)
+    assert stack == [0x0002]
+
+
+def test_op_over():
+    with pytest.raises(ValueError):
+        stack = [0x0001]
+        op_over(stack=stack)
+
+    stack = [0x0001, 0x0002, 0x0003]
+    op_over(stack=stack)
+    assert stack == [0x0001, 0x0002, 0x0003, 0x0002]
+
+
+def test_op_rot():
+    with pytest.raises(ValueError):
+        stack = [0x0001, 0x0002]
+        op_rot(stack=stack)
+
+    stack = [0x0001, 0x0002, 0x0003]
+    op_rot(stack=stack)
+    assert stack == [0x0002, 0x0003, 0x0001]
+
+
+def test_op_swap():
+    with pytest.raises(ValueError):
+        stack = [0x0001]
+        op_swap(stack=stack)
+
+    stack = [0x0001, 0x0002]
+    op_swap(stack=stack)
+    assert stack == [0x0002, 0x0001]
+
+
+def test_op_tuck():
+    with pytest.raises(ValueError):
+        stack = [0x01]
+        op_tuck(stack=stack)
+
+    stack = [0x01, 0x02]
+    op_tuck(stack=stack)
+    assert stack == [0x02, 0x01, 0x02]
+
+    stack = [0x01, 0x02, 0x03]
+    op_tuck(stack=stack)
+    assert stack == [0x01, 0x03, 0x02, 0x03]
+
+def test_op_2drop():
+    with pytest.raises(ValueError):
+        stack = [0x01]
+        op_2drop(stack=stack)
+
+    stack = [0x01, 0x02]
+    op_2drop(stack=stack)
+    assert stack == []
+
+    stack = [0x01, 0x02, 0x03]
+    op_2drop(stack=stack)
+    assert stack == [0x01]
+
+
+def test_op_2dup():
+    with pytest.raises(ValueError):
+        stack = [0x01]
+        op_2dup(stack=stack)
+
+    stack = [0x01, 0x02]
+    op_2dup(stack=stack)
+    assert stack == [0x01, 0x02, 0x01, 0x02]
+
+
+def test_op_3dup():
+    with pytest.raises(ValueError):
+        stack = [0x01, 0x02]
+        op_3dup(stack=stack)
+
+    stack = [0x01, 0x02, 0x03]
+    op_3dup(stack=stack)
+    assert stack == [0x01, 0x02, 0x03, 0x01, 0x02, 0x03]
+
+
+def test_op_2over():
+    with pytest.raises(ValueError):
+        stack = [0x01, 0x02, 0x03]
+        op_2over(stack=stack)
+
+    stack = [0x01, 0x02, 0x03, 0x04]
+    op_2over(stack=stack)
+    assert stack == [0x01, 0x02, 0x03, 0x04, 0x01, 0x02]
+
+
+def test_op_2rot():
+    with pytest.raises(ValueError):
+        stack = [0x01, 0x02, 0x03, 0x04, 0x05]
+        op_2rot(stack=stack)
+
+    stack = [0x01, 0x02, 0x03, 0x04, 0x05, 0x06]
+    op_2rot(stack=stack)
+    assert stack == [0x03, 0x04, 0x05, 0x06, 0x01, 0x02]
+
+
+def test_op_2swap():
+    with pytest.raises(ValueError):
+        stack = [0x01, 0x02, 0x03]
+        op_2swap(stack=stack)
+
+    stack = [0x01, 0x02, 0x03, 0x04]
+    op_2swap(stack=stack)
+    assert stack == [0x03, 0x04, 0x01, 0x02]
+
+
+# CRYPTO FUNCTIONS TESTS
+# ----------------------------------------------------------------------------
+
+
+class TestOpHash160:
+    def test_stack_is_empty(self):
+        stack = []
+        assert op_hash160(stack=stack) == False
+
+    def test_operation(self):
+        x = bytes.fromhex('0001')
+        stack = [x]
+
+        assert op_hash160(stack=stack) == True
+        assert stack == [hash160(x)]
+
+
+class TestOpHash256:
+    def test_stack_is_empty(self):
+        stack = []
+        assert op_hash256(stack=stack) == False
+
+    def test_operation(self):
+        x = bytes.fromhex('0001')
+        stack = [x]
+
+        assert op_hash256(stack=stack) == True
+        assert stack == [hash256(x)]
