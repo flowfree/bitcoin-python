@@ -1,7 +1,11 @@
+import hashlib 
+
 from .exceptions import (
     InsufficientStackItems, InvalidTransaction, ScriptError
 )
-from .helpers import decode_num, encode_num, hash160, hash256 
+from .helpers import (
+    decode_num, encode_num, hash160, hash256 
+)
 
 
 # Opcode contants
@@ -619,20 +623,84 @@ def op_equalverify(**kwargs):
 # ----------------------------------------------------------------------------
 
 
-def op_hash160(**kwargs):
+def op_ripemd160(**kwargs):
+    """
+    The input is hashed using RIPEMD-160.
+    """
     stack = kwargs.get('stack')
     if len(stack) < 1:
         raise InsufficientStackItems
-    element = stack.pop()
-    stack.append(hash160(element))
+    a = stack.pop()
+    b = hashlib.new('ripemd160', a).digest()
+    stack.append(b)
+
+
+def op_sha1(**kwargs):
+    """
+    The input is hashed using SHA-1.
+    """
+    stack = kwargs.get('stack')
+    if len(stack) < 1:
+        raise InsufficientStackItems
+    a = stack.pop()
+    b = hashlib.sha1(a).digest()
+    stack.append(b)
+
+
+def op_sha256(**kwargs):
+    """
+    The input is hashed using SHA-256.
+    """
+    stack = kwargs.get('stack')
+    if len(stack) < 1:
+        raise InsufficientStackItems
+    a = stack.pop()
+    b = hashlib.sha256(a).digest()
+    stack.append(b)
+
+
+def op_hash160(**kwargs):
+    """
+    The input is hashed twice: first with SHA-256 and then with RIPEMD-160.
+    """
+    stack = kwargs.get('stack')
+    if len(stack) < 1:
+        raise InsufficientStackItems
+    a = stack.pop()
+    b = hash160(a)
+    stack.append(b)
 
 
 def op_hash256(**kwargs):
+    """
+    The input is hashed two times with SHA-256.
+    """
     stack = kwargs.get('stack')
     if len(stack) < 1:
         raise InsufficientStackItems
-    element = stack.pop()
-    stack.append(hash256(element))
+    a = stack.pop()
+    b = hash256(a)
+    stack.append(b)
+
+
+def op_codeseparator(**kwargs):
+    pass
+
+
+def op_checksig(**kwargs):
+    raise NotImplementedError
+
+
+def op_checksigverify(**kwargs):
+    raise NotImplementedError
+
+
+def op_checkmultisig(**kwargs):
+    raise NotImplementedError
+
+
+def op_checkmultisigverify(**kwargs):
+    raise NotImplementedError
 
 
 OP_CODE_FUNCTIONS = {
@@ -700,6 +768,13 @@ OP_CODE_FUNCTIONS = {
     OP_EQUALVERIFY: op_equalverify,
 
     # Crypto functions
-    OP_HASH160: op_hash160,
+    OP_RIPEMD160: op_ripemd160,
+    OP_SHA1: op_sha1,
     OP_HASH256: op_hash256,
+    OP_HASH160: op_hash160,
+    OP_CODESEPARATOR: op_codeseparator,
+    OP_CHECKSIG: op_checksig,
+    OP_CHECKSIGVERIFY: op_checksigverify,
+    OP_CHECKMULTISIG: op_checkmultisig,
+    OP_CHECKMULTISIGVERIFY: op_checkmultisigverify,
 }

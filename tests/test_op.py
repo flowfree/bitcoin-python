@@ -583,6 +583,29 @@ def test_op_equalverify():
 # ----------------------------------------------------------------------------
 
 
+def test_op_ripemd160():
+    with pytest.raises(InsufficientStackItems):
+        stack = []
+        op_ripemd160(stack=stack)
+
+    stack = [b'abc']
+    op_ripemd160(stack=stack)
+    assert stack[-1].hex() == '8eb208f7e05d987a9b044a8e98c6b087f15a0bfc'
+
+
+def test_op_sha1():
+    stack = [b'abc']
+    op_sha1(stack=stack)
+    assert stack[-1].hex() == 'a9993e364706816aba3e25717850c26c9cd0d89d'
+
+
+def test_op_sha256():
+    stack = [b'abc']
+    op_sha256(stack=stack)
+    assert stack[-1].hex() == 'ba7816bf8f01cfea414140de5dae2223' \
+                              'b00361a396177a9cb410ff61f20015ad'
+
+
 def test_op_hash160():
     with pytest.raises(InsufficientStackItems):
         stack = []
