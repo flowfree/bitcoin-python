@@ -46,6 +46,17 @@ class Tx(object):
         """
         return hash256(self.serialize())[::-1]
 
+    def fee(self):
+        """
+        Returns the fee of this transaction in satoshi.
+        """
+        input_sum, output_sum = 0, 0
+        for tx_in in self.tx_ins:
+            input_sum += tx_in.value(self.testnet)
+        for tx_out in self.tx_outs:
+            output_sum += tx_out.amount
+        return input_sum - output_sum
+
     @staticmethod
     def parse(stream, testnet=False):
         version = little_endian_to_int(stream.read(4))
@@ -100,7 +111,7 @@ class TxIn(object):
         return TxIn(prev_tx, prev_index, script_sig, sequence)
 
     def fetch_tx(self, testnet=False):
-        return TxFetcher.fetch(self.prev_tx.hex(), testnet=testnet)
+        return TxFetcher.fetch(self.prev_tx.hex(), testnet=testnet, fresh=True)
 
     def value(self, testnet=False):
         tx = self.fetch_tx(testnet=testnet)
