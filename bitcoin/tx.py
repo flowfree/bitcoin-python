@@ -38,7 +38,7 @@ class Tx(object):
         """
         Human-readable hexadecimal of the transaction hash.
         """
-        return self.hash.hex()
+        return self.hash().hex()
 
     def hash(self):
         """
