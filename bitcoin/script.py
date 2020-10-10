@@ -93,3 +93,5 @@ class Script(object):
 
         if len(stack) == 0 or stack.pop() == b'':
             raise ScriptError
+
+        return True

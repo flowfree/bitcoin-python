@@ -621,6 +621,331 @@ def op_equalverify(**kwargs):
     op_verify(**kwargs)
 
 
+# ARITHMETIC FUNCTIONS
+# ----------------------------------------------------------------------------
+
+
+def op_1add(**kwargs):
+    """
+    1 is added to the input.
+    """
+    stack = kwargs.get('stack')
+    if len(stack) < 1:
+        raise StackError
+    a = stack.pop()
+    b = decode_num(a) + 1
+    stack.append(encode_num(b))
+
+
+def op_1sub(**kwargs):
+    """
+    1 is subtracted from the input.
+    """
+    stack = kwargs.get('stack')
+    if len(stack) < 1:
+        raise StackError
+    a = stack.pop()
+    b = decode_num(a) - 1
+    stack.append(encode_num(b))
+
+
+def op_2mul(**kwargs):
+    """
+    DISABLED
+    """
+    raise InvalidOpCode
+
+
+def op_2div(**kwargs):
+    """
+    DISABLED
+    """
+    raise InvalidOpCode
+
+
+def op_negate(**kwargs):
+    """
+    The sign of the input is flipped.
+    """
+    stack = kwargs.get('stack')
+    if len(stack) < 1:
+        raise StackError
+    a = stack.pop()
+    b = -1 * decode_num(a)
+    stack.append(encode_num(b))
+
+
+def op_abs(**kwargs):
+    """
+    The input is made positive.
+    """
+    stack = kwargs.get('stack')
+    if len(stack) < 1:
+        raise StackError
+    a = stack.pop()
+    b = abs(decode_num(a))
+    stack.append(encode_num(b))
+
+
+def op_not(**kwargs):
+    """
+    If the input is 0 or 1, it is flipped. Otherwise the output will be 0.
+    """
+    stack = kwargs.get('stack')
+    if len(stack) < 1:
+        raise StackError
+    a = stack.pop()
+    if a == encode_num(0):
+        stack.append(encode_num(1))
+    else:
+        stack.append(encode_num(0))
+
+
+def op_0notequal(**kwargs):
+    """
+    Returns 0 if the input is 0. 1 otherwise.
+    """
+    stack = kwargs.get('stack')
+    if len(stack) < 1:
+        raise StackError
+    a = stack.pop()
+    if a == encode_num(0):
+        stack.append(encode_num(0))
+    else:
+        stack.append(encode_num(1))
+
+
+def op_add(**kwargs):
+    """
+    a is added to b.
+    """
+    stack = kwargs.get('stack')
+    if len(stack) < 2:
+        raise StackError
+    a = stack.pop()
+    b = stack.pop()
+    c = decode_num(a) + decode_num(b)
+    stack.append(encode_num(c))
+
+
+def op_sub(**kwargs):
+    """
+    a is subtracted from b.
+    """
+    stack = kwargs.get('stack')
+    if len(stack) < 2:
+        raise StackError
+    a = stack.pop()
+    b = stack.pop()
+    c = decode_num(b) - decode_num(a)
+    stack.append(encode_num(c))
+
+
+def op_mul(**kwargs):
+    """
+    DISABLED
+    """
+    raise InvalidOpCode
+
+
+def op_div(**kwargs):
+    """
+    DISABLED
+    """
+    raise InvalidOpCode
+
+
+def op_mod(**kwargs):
+    """
+    DISABLED
+    """
+    raise InvalidOpCode
+
+
+def op_lshift(**kwargs):
+    """
+    DISABLED
+    """
+    raise InvalidOpCode
+
+
+def op_rshift(**kwargs):
+    """
+    DISABLED
+    """
+    raise InvalidOpCode
+
+
+def op_booland(**kwargs):
+    """
+    If both a and b are not 0, the output is 1. Otherwise 0.
+    """
+    stack = kwargs.get('stack')
+    if len(stack) < 2:
+        raise StackError
+    a = stack.pop()
+    b = stack.pop()
+    if decode_num(a) != 0 and decode_num(b) != 0:
+        stack.append(encode_num(1))
+    else:
+        stack.append(encode_num(0))
+
+
+def op_boolor(**kwargs):
+    """
+    If a or b is not 0, the output is 1. Otherwise 0.
+    """
+    stack = kwargs.get('stack')
+    if len(stack) < 2:
+        raise StackError
+    a = stack.pop()
+    b = stack.pop()
+    if decode_num(a) != 0 or decode_num(b) != 0:
+        stack.append(encode_num(1))
+    else:
+        stack.append(encode_num(0))
+
+
+def op_numequal(**kwargs):
+    """
+    Returns 1 if the numbers are equal, 0 otherwise.
+    """
+    stack = kwargs.get('stack')
+    if len(stack) < 2:
+        raise StackError
+    a = stack.pop()
+    b = stack.pop()
+    if a == b:
+        stack.append(encode_num(1))
+    else:
+        stack.append(encode_num(0))
+
+
+def op_numequalverify(**kwargs):
+    """
+    Same as OP_NUMEQUAL, but runs OP_VERIFY afterward.
+    """
+    op_numequal(**kwargs)
+    op_verify(**kwargs)
+
+
+def op_numnotequal(**kwargs):
+    """
+    Returns 1 if the numbers are not equal, 0 otherwise.
+    """
+    stack = kwargs.get('stack')
+    if len(stack) < 2:
+        raise StackError
+    a = stack.pop()
+    b = stack.pop()
+    if a != b:
+        stack.append(encode_num(1))
+    else:
+        stack.append(encode_num(0))
+
+
+def op_lessthan(**kwargs):
+    """
+    Returns 1 if b is less than a, 0 otherwise.
+    """
+    stack = kwargs.get('stack')
+    if len(stack) < 2:
+        raise StackError
+    a = stack.pop()
+    b = stack.pop()
+    if decode_num(b) < decode_num(a):
+        stack.append(encode_num(1))
+    else:
+        stack.append(encode_num(0))
+
+
+def op_greaterthan(**kwargs):
+    """
+    Returns 1 if b is greater than a, 0 otherwise.
+    """
+    stack = kwargs.get('stack')
+    if len(stack) < 2:
+        raise StackError
+    a = stack.pop()
+    b = stack.pop()
+    if decode_num(b) > decode_num(a):
+        stack.append(encode_num(1))
+    else:
+        stack.append(encode_num(0))
+
+
+def op_lessthanorequal(**kwargs):
+    """
+    Returns 1 if b is less than or equal to a, 0 otherwise.
+    """
+    stack = kwargs.get('stack')
+    if len(stack) < 2:
+        raise StackError
+    a = stack.pop()
+    b = stack.pop()
+    if decode_num(b) <= decode_num(a):
+        stack.append(encode_num(1))
+    else:
+        stack.append(encode_num(0))
+
+
+def op_greaterthanorequal(**kwargs):
+    """
+    Returns 1 if b is greater than or equal to a, 0 otherwise.
+    """
+    stack = kwargs.get('stack')
+    if len(stack) < 2:
+        raise StackError
+    a = stack.pop()
+    b = stack.pop()
+    if decode_num(b) >= decode_num(a):
+        stack.append(encode_num(1))
+    else:
+        stack.append(encode_num(0))
+
+
+def op_min(**kwargs):
+    """
+    Returns the smaller of a and b.
+    """
+    stack = kwargs.get('stack')
+    if len(stack) < 2:
+        raise StackError
+    a = stack.pop()
+    b = stack.pop()
+    c = min(decode_num(a), decode_num(b))
+    stack.append(encode_num(c))
+
+
+def op_max(**kwargs):
+    """
+    Returns the larger of a and b.
+    """
+    stack = kwargs.get('stack')
+    if len(stack) < 2:
+        raise StackError
+    a = stack.pop()
+    b = stack.pop()
+    c = max(decode_num(a), decode_num(b))
+    stack.append(encode_num(c))
+
+
+def op_within(**kwargs):
+    """
+    Returns 1 if x is within the specified range (left-inclusive), 0 otherwise.
+    """
+    stack = kwargs.get('stack')
+    if len(stack) < 3:
+        raise StackError
+    r = decode_num(stack.pop())
+    l = decode_num(stack.pop())
+    x = decode_num(stack.pop())
+    if x >= l and x < r:
+        stack.append(encode_num(1))
+    else:
+        stack.append(encode_num(0))
+
+
 # CRYPTO FUNCTIONS
 # ----------------------------------------------------------------------------
 
@@ -791,6 +1116,35 @@ OP_CODE_FUNCTIONS = {
     OP_XOR: op_xor,
     OP_EQUAL: op_equal,
     OP_EQUALVERIFY: op_equalverify,
+
+    # Arithmetic functions
+    OP_1ADD: op_1add,
+    OP_1SUB: op_1sub,
+    OP_2MUL: op_2mul,
+    OP_2DIV: op_2div,
+    OP_NEGATE: op_negate,
+    OP_ABS: op_abs,
+    OP_NOT: op_not,
+    OP_0NOTEQUAL: op_0notequal,
+    OP_ADD: op_add,
+    OP_SUB: op_sub,
+    OP_MUL: op_mul,
+    OP_DIV: op_div,
+    OP_MOD: op_mod,
+    OP_LSHIFT: op_lshift,
+    OP_RSHIFT: op_rshift,
+    OP_BOOLAND: op_booland,
+    OP_BOOLOR: op_boolor,
+    OP_NUMEQUAL: op_numequal,
+    OP_NUMEQUALVERIFY: op_numequalverify,
+    OP_NUMNOTEQUAL: op_numnotequal,
+    OP_LESSTHAN: op_lessthan,
+    OP_GREATERTHAN: op_greaterthan,
+    OP_LESSTHANOREQUAL: op_lessthanorequal,
+    OP_GREATERTHANOREQUAL: op_greaterthanorequal,
+    OP_MIN: op_min,
+    OP_MAX: op_max,
+    OP_WITHIN: op_within,
 
     # Crypto functions
     OP_RIPEMD160: op_ripemd160,

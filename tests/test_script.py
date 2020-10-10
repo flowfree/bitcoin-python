@@ -1,6 +1,7 @@
 from io import BytesIO
 
 from bitcoin.script import Script
+from bitcoin.op import *
 
 
 def test_parse():
