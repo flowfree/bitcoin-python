@@ -110,15 +110,12 @@ class TxIn(object):
 
         return TxIn(prev_tx, prev_index, script_sig, sequence)
 
-    def fetch_tx(self, testnet=False):
-        return TxFetcher.fetch(self.prev_tx.hex(), testnet=testnet, fresh=False)
-
     def value(self, testnet=False):
-        tx = self.fetch_tx(testnet=testnet)
+        tx =TxFetcher.fetch(self.prev_tx.hex(), testnet=testnet)
         return tx.tx_outs[self.prev_index].amount
 
     def script_pubkey(self, testnet=False):
-        tx = self.fetch_tx(testnet=testnet)
+        tx =TxFetcher.fetch(self.prev_tx.hex(), testnet=testnet)
         return tx.tx_outs[self.prev_index].script_pubkey
 
     def serialize(self):
