@@ -111,7 +111,7 @@ class TxIn(object):
         return TxIn(prev_tx, prev_index, script_sig, sequence)
 
     def fetch_tx(self, testnet=False):
-        return TxFetcher.fetch(self.prev_tx.hex(), testnet=testnet, fresh=True)
+        return TxFetcher.fetch(self.prev_tx.hex(), testnet=testnet, fresh=False)
 
     def value(self, testnet=False):
         tx = self.fetch_tx(testnet=testnet)
