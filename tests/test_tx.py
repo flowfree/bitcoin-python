@@ -57,29 +57,21 @@ class TestTx:
         assert tx.serialize() == raw_tx
 
     @responses.activate
-    def test_fee(self, stream):
+    def test_fee(self, stream, load_raw_tx):
         responses.add(
             responses.GET,
             'http://mainnet.programmingbitcoin.com/tx/' \
             'd1c789a9c60383bf715f3f6ad9d14b91fe55f3deb369fe5d9280cb1a01793f81.hex',
-            body='0100000002137c53f0fb48f83666fcfd2fe9f12d13e94ee109c5aeabbfa'
-                 '32bb9e02538f4cb000000006a47304402207e6009ad86367fc4b166bc80'
-                 'bf10cf1e78832a01e9bb491c6d126ee8aa436cb502200e29e6dd7708ed4'
-                 '19cd5ba798981c960f0cc811b24e894bff072fea8074a7c4c012103bc9e'
-                 '7397f739c70f424aa7dcce9d2e521eb228b0ccba619cd6a0b9691da796a'
-                 '1ffffffff517472e77bc29ae59a914f55211f05024556812a2dd7d8df29'
-                 '3265acd8330159010000006b483045022100f4bfdb0b3185c778cf28acb'
-                 'af115376352f091ad9e27225e6f3f350b847579c702200d69177773cd2b'
-                 'b993a816a5ae08e77a6270cf46b33f8f79d45b0cd1244d9c4c0121031c0'
-                 'b0b95b522805ea9d0225b1946ecaeb1727c0b36c7e34165769fd8ed860b'
-                 'f5ffffffff027a958802000000001976a914a802fc56c704ce87c42d7c9'
-                 '2eb75e7896bdc41ae88aca5515e00000000001976a914e82bd75c9c662c'
-                 '3f5700b33fec8a676b6e9391d588ac00000000',
+            body=load_raw_tx('d1c789a9c60383bf715f3f6ad9d14b91fe55f3deb369fe5d9280cb1a01793f81.txt'),
             status=200,
         )
 
         tx = Tx.parse(stream)
         assert tx.fee() == 40000
+
+    def test_sig_hash(self, stream):
+        tx = Tx.parse(stream)
+        assert 1
 
 
 class TestTxOut:
