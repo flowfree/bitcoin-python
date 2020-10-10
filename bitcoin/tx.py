@@ -160,16 +160,14 @@ class TxFetcher:
     cache = {}
 
     @staticmethod
-    def get_url(testnet=False):
-        if testnet:
-            return 'http://testnet.programmingbitcoin.com'
-        else:
-            return 'http://mainnet.programmingbitcoin.com'
-
-    @staticmethod
     def fetch(tx_id, testnet=False, fresh=False):
+        if testnet:
+            base_url = 'http://testnet.programmingbitcoin.com'
+        else:
+            base_url = 'http://mainnet.programmingbitcoin.com'
+
         if fresh or (tx_id not in TxFetcher.cache):
-            url = f'{TxFetcher.get_url(testnet)}/tx/{tx_id}.hex'
+            url = f'{base_url}/tx/{tx_id}.hex'
             response = requests.get(url)
             try:
                 raw = bytes.fromhex(response.text.strip())
