@@ -2,6 +2,7 @@ from io import BytesIO
 
 import requests 
 
+from .exceptions import InvalidTransaction, ScriptError
 from .helpers import (
     encode_varints, hash256, int_to_little_endian, little_endian_to_int, 
     read_varints
@@ -117,6 +118,26 @@ class Tx(object):
             sig += int_to_little_endian(SIGHASH_ALL, 4)
             h256 = hash256(sig)
             return int.from_bytes(h256, 'big')
+
+    def verify_input(self, input_index):
+        tx_in = self.tx_ins[input_index]
+        script_pubkey = tx_in.script_pubkey(testnet=self.testnet)
+        z = self.sig_hash(input_index)
+        script = tx_in.script_sig + script_pubkey
+        script.evaluate(z)
+
+    def verify(self):
+        """
+        Verify this transaction.
+        """
+        if self.fee() < 0:
+            raise InvalidTransaction
+        for i in range(len(self.tx_ins)):
+            try:
+                self.verify_input(i)
+            except ScriptError:
+                raise InvalidTransaction
+        return True
 
 
 class TxIn(object):
