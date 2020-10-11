@@ -9,6 +9,12 @@ from .helpers import (
 from .script import Script
 
 
+SIGHASH_ALL = 1
+SIGHASH_NONE = 2
+SIGHASH_SINGLE = 3
+SIGHASH_ANYONECANPAY = 128
+
+
 class Tx(object):
     def __init__(self, version, tx_ins, tx_outs, locktime, testnet=False):
         self.version = version
@@ -85,6 +91,32 @@ class Tx(object):
             result += tx_out.serialize()
         result += int_to_little_endian(self.locktime, 4)
         return result
+
+    def sig_hash(self, input_index):
+        sig = int_to_little_endian(self.version, 4)
+        sig += encode_varints(len(self.tx_ins))
+        for i, tx_in in enumerate(self.tx_ins):
+            if i == input_index:
+                script = TxIn(
+                    prev_tx=tx_in.prev_tx,
+                    prev_index=tx_in.prev_index,
+                    script_sig=tx_in.script_pubkey(self.testnet),
+                    sequence=tx_in.sequence,
+                )
+            else:
+                script = TxIn(
+                    prev_tx=tx_in.prev_tx,
+                    prev_index=tx_in.prev_index,
+                    sequence=tx_in.sequence,
+                )
+            sig += script.serialize()
+            sig += encode_varints(len(self.tx_outs))
+            for tx_out in self.tx_outs:
+                sig += tx_out.serialize()
+            sig += int_to_little_endian(self.locktime, 4)
+            sig += int_to_little_endian(SIGHASH_ALL, 4)
+            h256 = hash256(sig)
+            return int.from_bytes(h256, 'big')
 
 
 class TxIn(object):

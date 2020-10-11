@@ -58,20 +58,33 @@ class TestTx:
 
     @responses.activate
     def test_fee(self, stream, load_raw_tx):
+        prev_tx_id = 'd1c789a9c60383bf715f3f6ad9d14b91fe55f3deb369fe5d9280cb1a01793f81'
+
         responses.add(
             responses.GET,
-            'http://mainnet.programmingbitcoin.com/tx/' \
-            'd1c789a9c60383bf715f3f6ad9d14b91fe55f3deb369fe5d9280cb1a01793f81.hex',
-            body=load_raw_tx('d1c789a9c60383bf715f3f6ad9d14b91fe55f3deb369fe5d9280cb1a01793f81.txt'),
+            f'http://mainnet.programmingbitcoin.com/tx/{prev_tx_id}.hex',
+            body=load_raw_tx(f'{prev_tx_id}.txt'),
             status=200,
         )
 
         tx = Tx.parse(stream)
         assert tx.fee() == 40000
 
-    def test_sig_hash(self, stream):
+    @responses.activate
+    def test_sig_hash(self, stream, load_raw_tx):
+        prev_tx_id = 'd1c789a9c60383bf715f3f6ad9d14b91fe55f3deb369fe5d9280cb1a01793f81'
+
+        responses.add(
+            responses.GET,
+            f'http://mainnet.programmingbitcoin.com/tx/{prev_tx_id}.hex',
+            body=load_raw_tx(f'{prev_tx_id}.txt'),
+            status=200,
+        )
+
         tx = Tx.parse(stream)
-        assert 1
+        sig = tx.sig_hash(0)
+        assert hex(sig) == '0x27e0c5994dec7824e56dec6b2fcb342' \
+                           'eb7cdb0d0957c2fce9882f715e85d81a6'
 
 
 class TestTxOut:

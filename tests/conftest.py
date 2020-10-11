@@ -1,4 +1,14 @@
+import socket 
+
 import pytest 
+
+
+class DisableNetworkConnection(socket.socket):
+    def __init__(self, *args, **kwargs):
+        raise Exception('Network connection is disabled in test mode.')
+
+
+socket.socket = DisableNetworkConnection
 
 
 @pytest.fixture
