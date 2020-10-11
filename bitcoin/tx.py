@@ -2,11 +2,18 @@ from io import BytesIO
 
 import requests 
 
+from .exceptions import InvalidTransaction, ScriptError
 from .helpers import (
     encode_varints, hash256, int_to_little_endian, little_endian_to_int, 
     read_varints
 )
 from .script import Script
+
+
+SIGHASH_ALL = 1
+SIGHASH_NONE = 2
+SIGHASH_SINGLE = 3
+SIGHASH_ANYONECANPAY = 128
 
 
 class Tx(object):
@@ -38,13 +45,24 @@ class Tx(object):
         """
         Human-readable hexadecimal of the transaction hash.
         """
-        return self.hash.hex()
+        return self.hash().hex()
 
     def hash(self):
         """
         Binary hash of the legacy serialization.
         """
         return hash256(self.serialize())[::-1]
+
+    def fee(self):
+        """
+        Returns the fee of this transaction in satoshi.
+        """
+        input_sum, output_sum = 0, 0
+        for tx_in in self.tx_ins:
+            input_sum += tx_in.value(self.testnet)
+        for tx_out in self.tx_outs:
+            output_sum += tx_out.amount
+        return input_sum - output_sum
 
     @staticmethod
     def parse(stream, testnet=False):
@@ -75,6 +93,52 @@ class Tx(object):
         result += int_to_little_endian(self.locktime, 4)
         return result
 
+    def sig_hash(self, input_index):
+        sig = int_to_little_endian(self.version, 4)
+        sig += encode_varints(len(self.tx_ins))
+        for i, tx_in in enumerate(self.tx_ins):
+            if i == input_index:
+                script = TxIn(
+                    prev_tx=tx_in.prev_tx,
+                    prev_index=tx_in.prev_index,
+                    script_sig=tx_in.script_pubkey(self.testnet),
+                    sequence=tx_in.sequence,
+                )
+            else:
+                script = TxIn(
+                    prev_tx=tx_in.prev_tx,
+                    prev_index=tx_in.prev_index,
+                    sequence=tx_in.sequence,
+                )
+            sig += script.serialize()
+            sig += encode_varints(len(self.tx_outs))
+            for tx_out in self.tx_outs:
+                sig += tx_out.serialize()
+            sig += int_to_little_endian(self.locktime, 4)
+            sig += int_to_little_endian(SIGHASH_ALL, 4)
+            h256 = hash256(sig)
+            return int.from_bytes(h256, 'big')
+
+    def verify_input(self, input_index):
+        tx_in = self.tx_ins[input_index]
+        script_pubkey = tx_in.script_pubkey(testnet=self.testnet)
+        z = self.sig_hash(input_index)
+        script = tx_in.script_sig + script_pubkey
+        script.evaluate(z)
+
+    def verify(self):
+        """
+        Verify this transaction.
+        """
+        if self.fee() < 0:
+            raise InvalidTransaction
+        for i in range(len(self.tx_ins)):
+            try:
+                self.verify_input(i)
+            except ScriptError:
+                raise InvalidTransaction
+        return True
+
 
 class TxIn(object):
     def __init__(self, prev_tx, prev_index, 
@@ -99,15 +163,12 @@ class TxIn(object):
 
         return TxIn(prev_tx, prev_index, script_sig, sequence)
 
-    def fetch_tx(self, testnet=False):
-        return TxFetcher.fetch(self.prev_tx.hex(), testnet=testnet)
-
     def value(self, testnet=False):
-        tx = self.fetch_tx(testnet=testnet)
+        tx =TxFetcher.fetch(self.prev_tx.hex(), testnet=testnet)
         return tx.tx_outs[self.prev_index].amount
 
     def script_pubkey(self, testnet=False):
-        tx = self.fetch_tx(testnet=testnet)
+        tx =TxFetcher.fetch(self.prev_tx.hex(), testnet=testnet)
         return tx.tx_outs[self.prev_index].script_pubkey
 
     def serialize(self):
@@ -149,16 +210,14 @@ class TxFetcher:
     cache = {}
 
     @staticmethod
-    def get_url(testnet=False):
-        if testnet:
-            return 'http://testnet.programmingbitcoin.com'
-        else:
-            return 'http://mainnet.programmingbitcoin.com'
-
-    @staticmethod
     def fetch(tx_id, testnet=False, fresh=False):
+        if testnet:
+            base_url = 'http://testnet.programmingbitcoin.com'
+        else:
+            base_url = 'http://mainnet.programmingbitcoin.com'
+
         if fresh or (tx_id not in TxFetcher.cache):
-            url = f'{TxFetcher.get_url(testnet)}/tx/{tx_id}.hex'
+            url = f'{base_url}/tx/{tx_id}.hex'
             response = requests.get(url)
             try:
                 raw = bytes.fromhex(response.text.strip())

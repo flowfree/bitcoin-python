@@ -579,6 +579,432 @@ def test_op_equalverify():
     op_equalverify(stack=stack)
 
 
+# ARITHMETIC FUNCTIONS TESTS
+# ----------------------------------------------------------------------------
+
+def test_op_1add():
+    with pytest.raises(StackError):
+        stack = []
+        op_1add(stack=stack)
+
+    stack = [encode_num(1)]
+    op_1add(stack=stack)
+    assert stack == [encode_num(2)]
+
+
+def test_op_1sub():
+    with pytest.raises(StackError):
+        stack = []
+        op_1sub(stack=stack)
+
+    stack = [encode_num(3)]
+    op_1sub(stack=stack)
+    assert stack == [encode_num(2)]
+
+
+def test_op_2mul():
+    with pytest.raises(InvalidOpCode):
+        op_2mul(stack=[])
+
+
+def test_op_2div():
+    with pytest.raises(InvalidOpCode):
+        op_2div(stack=[])
+
+
+def test_op_negate():
+    with pytest.raises(StackError):
+        stack = []
+        op_negate(stack=stack)
+
+    tests = [
+        (-1, 1),
+        (10, -10),
+        (2, -2),
+        (0, 0),
+        (-31, 31),
+    ]
+    for a, b in tests:
+        stack = [encode_num(a)]
+        op_negate(stack=stack)
+        assert stack == [encode_num(b)]
+
+
+def test_op_abs():
+    with pytest.raises(StackError):
+        stack = []
+        op_abs(stack=stack)
+    
+    tests = [
+        (-1, 1),
+        (10, 10),
+        (-2, 2),
+        (-0, 0),
+        (31, 31),
+    ]
+    for a, b in tests:
+        stack = [encode_num(a)]
+        op_abs(stack=stack)
+        assert stack == [encode_num(b)]
+
+
+def test_op_not():
+    with pytest.raises(StackError):
+        stack = []
+        op_not(stack=stack)
+
+    tests = (
+        (0, 1),
+        (1, 0),
+        (2, 0),
+        (-1, 0),
+        (7, 0),
+    )
+    for a, b in tests:
+        stack = [encode_num(a)]
+        op_not(stack=stack)
+        assert stack == [encode_num(b)]
+
+
+def test_op_0notequal():
+    with pytest.raises(StackError):
+        stack = []
+        op_0notequal(stack=stack)
+
+    tests = (
+        (0, 0),
+        (1, 1),
+        (2, 1),
+        (-1, 1),
+        (-7, 1),
+    )
+    for a, b in tests:
+        stack = [encode_num(a)]
+        op_0notequal(stack=stack)
+        assert stack == [encode_num(b)]
+
+
+def test_op_add():
+    with pytest.raises(StackError):
+        stack = [encode_num(1)]
+        op_add(stack=stack)
+
+    tests = (
+        (0, 0, 0),
+        (1, 1, 2),
+        (2, 1, 3),
+        (-1, 1, 0),
+        (-7, 1, -6),
+    )
+    for a, b, c in tests:
+        stack = [encode_num(a), encode_num(b)]
+        op_add(stack=stack)
+        assert stack == [encode_num(c)]
+
+
+def test_op_sub():
+    with pytest.raises(StackError):
+        stack = [encode_num(1)]
+        op_sub(stack=stack)
+
+    tests = (
+        (0, 0, 0),
+        (1, 1, 0),
+        (2, 1, 1),
+        (-1, 1, -2),
+        (-7, 1, -8),
+        (14, 6, 8),
+    )
+    for a, b, c in tests:
+        stack = [encode_num(a), encode_num(b)]
+        op_sub(stack=stack)
+        assert stack == [encode_num(c)]
+
+
+def test_op_mul():
+    with pytest.raises(InvalidOpCode):
+        op_mul(stack=[])
+
+
+def test_op_div():
+    with pytest.raises(InvalidOpCode):
+        op_div(stack=[])
+
+
+def test_op_mod():
+    with pytest.raises(InvalidOpCode):
+        op_mod(stack=[])
+
+
+def test_op_lshift():
+    with pytest.raises(InvalidOpCode):
+        op_lshift(stack=[])
+
+
+def test_op_rshift():
+    with pytest.raises(InvalidOpCode):
+        op_rshift(stack=[])
+
+
+def test_op_booland():
+    with pytest.raises(StackError):
+        stack = [encode_num(1)]
+        op_booland(stack=stack)
+
+    tests = (
+        (0, 0, 0),
+        (2, 1, 1),
+        (-1, 0, 0),
+        (0, 5, 0),
+        (7, -1, 1),
+        (17, 5, 1),
+    )
+    for a, b, c in tests:
+        stack = [encode_num(a), encode_num(b)]
+        op_booland(stack=stack)
+        assert stack == [encode_num(c)]
+
+
+def test_op_boolor():
+    with pytest.raises(StackError):
+        stack = [encode_num(1)]
+        op_boolor(stack=stack)
+
+    tests = (
+        (0, 0, 0),
+        (2, 1, 1),
+        (-1, 0, 1),
+        (0, 5, 1),
+        (7, -1, 1),
+        (17, 5, 1),
+    )
+    for a, b, c in tests:
+        stack = [encode_num(a), encode_num(b)]
+        op_boolor(stack=stack)
+        assert stack == [encode_num(c)]
+
+
+def test_op_numequal():
+    with pytest.raises(StackError):
+        stack = [encode_num(1)]
+        op_numequal(stack=stack)
+
+    tests = (
+        (0, 0, 1),
+        (2, 1, 0),
+        (-1, 0, 0),
+        (5, 5, 1),
+        (7, -1, 0),
+        (-7, -7, 1),
+    )
+    for a, b, c in tests:
+        stack = [encode_num(a), encode_num(b)]
+        op_numequal(stack=stack)
+        assert stack == [encode_num(c)]
+
+
+def test_op_numequal():
+    with pytest.raises(StackError):
+        stack = [encode_num(1)]
+        op_numequal(stack=stack)
+
+    tests = (
+        (0, 0, 1),
+        (2, 1, 0),
+        (-1, 0, 0),
+        (5, 5, 1),
+        (7, -1, 0),
+        (-7, -7, 1),
+    )
+    for a, b, c in tests:
+        stack = [encode_num(a), encode_num(b)]
+        op_numequal(stack=stack)
+        assert stack == [encode_num(c)]
+
+
+def test_op_numequalverify():
+    with pytest.raises(StackError):
+        stack = [encode_num(1)]
+        op_numequalverify(stack=stack)
+
+    invalid_tests = (
+        (2, 1, 0),
+        (-1, 0, 0),
+        (7, -1, 0),
+    )
+    for a, b, c in invalid_tests:
+        with pytest.raises(InvalidTransaction):
+            stack = [encode_num(a), encode_num(b)]
+            op_numequalverify(stack=stack)
+
+    valid_tests = (
+        (0, 0, 1),
+        (5, 5, 1),
+        (-7, -7, 1),
+    )
+    for a, b, c in valid_tests:
+        stack = [encode_num(a), encode_num(b)]
+        op_numequalverify(stack=stack)
+
+
+def test_op_numnotequal():
+    with pytest.raises(StackError):
+        stack = [encode_num(1)]
+        op_numnotequal(stack=stack)
+
+    tests = (
+        (0, 0, 0),
+        (2, 1, 1),
+        (-1, 0, 1),
+        (5, 5, 0),
+        (7, -1, 1),
+        (-7, -7, 0),
+    )
+    for a, b, c in tests:
+        stack = [encode_num(a), encode_num(b)]
+        op_numnotequal(stack=stack)
+        assert stack == [encode_num(c)]
+
+
+def test_op_lessthan():
+    with pytest.raises(StackError):
+        stack = [encode_num(1)]
+        op_lessthan(stack=stack)
+
+    tests = (
+        (0, 0, 0),
+        (2, 1, 0),
+        (-1, 0, 1),
+        (5, 5, 0),
+        (7, -1, 0),
+        (-7, -7, 0),
+        (13, 27, 1),
+    )
+    for a, b, c in tests:
+        stack = [encode_num(a), encode_num(b)]
+        op_lessthan(stack=stack)
+        assert stack == [encode_num(c)]
+
+
+def test_op_greaterthan():
+    with pytest.raises(StackError):
+        stack = [encode_num(1)]
+        op_greaterthan(stack=stack)
+
+    tests = (
+        (0, 0, 0),
+        (2, 1, 1),
+        (-1, 0, 0),
+        (5, 5, 0),
+        (7, -1, 1),
+        (-7, -7, 0),
+        (13, 27, 0),
+    )
+    for a, b, c in tests:
+        stack = [encode_num(a), encode_num(b)]
+        op_greaterthan(stack=stack)
+        assert stack == [encode_num(c)]
+
+
+def test_op_lessthanorequal():
+    with pytest.raises(StackError):
+        stack = [encode_num(1)]
+        op_lessthanorequal(stack=stack)
+
+    tests = (
+        (0, 0, 1),
+        (2, 1, 0),
+        (-1, 0, 1),
+        (5, 5, 1),
+        (7, -1, 0),
+        (-7, -7, 1),
+        (13, 27, 1),
+    )
+    for a, b, c in tests:
+        stack = [encode_num(a), encode_num(b)]
+        op_lessthanorequal(stack=stack)
+        assert stack == [encode_num(c)]
+
+
+def test_op_greaterthanorequal():
+    with pytest.raises(StackError):
+        stack = [encode_num(1)]
+        op_greaterthanorequal(stack=stack)
+
+    tests = (
+        (0, 0, 1),
+        (2, 1, 1),
+        (-1, 0, 0),
+        (5, 5, 1),
+        (7, -1, 1),
+        (-7, -7, 1),
+        (13, 27, 0),
+    )
+    for a, b, c in tests:
+        stack = [encode_num(a), encode_num(b)]
+        op_greaterthanorequal(stack=stack)
+        assert stack == [encode_num(c)]
+
+
+def test_op_min():
+    with pytest.raises(StackError):
+        stack = [encode_num(1)]
+        op_min(stack=stack)
+
+    tests = (
+        (0, 0, 0),
+        (2, 1, 1),
+        (-1, 0, -1),
+        (5, 5, 5),
+        (7, -1, -1),
+        (-7, -7, -7),
+        (13, 27, 13),
+    )
+    for a, b, c in tests:
+        stack = [encode_num(a), encode_num(b)]
+        op_min(stack=stack)
+        assert stack == [encode_num(c)]
+
+
+def test_op_max():
+    with pytest.raises(StackError):
+        stack = [encode_num(1)]
+        op_max(stack=stack)
+
+    tests = (
+        (0, 0, 0),
+        (2, 1, 2),
+        (-1, 0, 0),
+        (5, 5, 5),
+        (7, -1, 7),
+        (-7, -7, -7),
+        (13, 27, 27),
+    )
+    for a, b, c in tests:
+        stack = [encode_num(a), encode_num(b)]
+        op_max(stack=stack)
+        assert stack == [encode_num(c)]
+
+
+def test_op_within():
+    with pytest.raises(StackError):
+        stack = [encode_num(1), encode_num(2)]
+        op_within(stack=stack)
+
+    tests = (
+        (-1, 0, 5, 0),
+        (0, 0, 5, 1),
+        (1, 0, 5, 1),
+        (2, 0, 5, 1),
+        (5, 0, 5, 0),
+        (6, 0, 5, 0),
+    )
+    for a, b, c, d, in tests:
+        stack = [encode_num(a), encode_num(b), encode_num(c)]
+        op_within(stack=stack)
+        assert stack == [encode_num(d)]
+
+
 # CRYPTO FUNCTIONS TESTS
 # ----------------------------------------------------------------------------
 

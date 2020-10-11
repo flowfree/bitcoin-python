@@ -1,6 +1,7 @@
 from io import BytesIO
 
 from bitcoin.script import Script
+from bitcoin.op import *
 
 
 def test_parse():
@@ -28,3 +29,18 @@ def test_serialize():
     script = Script.parse(stream)
 
     assert script.serialize().hex() == x
+
+
+def test_evaluate():
+    script_pubkey = [
+        OP_2,
+        OP_ADD,
+        OP_7,
+        OP_EQUAL,
+    ]
+    script_sig = [
+        OP_5,
+    ]
+    script = Script(cmds=script_sig) + Script(cmds=script_pubkey)
+
+    assert script.evaluate(z=None) == True
