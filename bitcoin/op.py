@@ -1,13 +1,12 @@
 import hashlib 
 
+from .ecc import S256Point, Signature
 from .exceptions import (
     InvalidOpCode, InvalidTransaction, ScriptError, StackError
 )
 from .helpers import (
     decode_num, encode_num, hash160, hash256 
 )
-from .s256_point import S256Point
-from .signature import Signature
 
 
 # Opcode contants
