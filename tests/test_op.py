@@ -1,7 +1,7 @@
 import pytest 
 
 from bitcoin.exceptions import (
-    InvalidTransaction, ScriptError, StackError
+    BadOpCode, InvalidTransaction, ScriptError, StackError
 )
 from bitcoin.helpers import (
     decode_num, encode_num, hash160, hash256, 
