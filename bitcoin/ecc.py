@@ -328,7 +328,7 @@ class PrivateKey(object):
 
     def sign(self, z):
         k = randint(0, N)
-        r = (k * G).x.num
+        r = (k * G).x.val
         k_inv = pow(k, N-2, N)
         s = (z + r * self.secret) * k_inv % N
         if s > N/2:
