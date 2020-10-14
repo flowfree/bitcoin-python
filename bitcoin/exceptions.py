@@ -13,7 +13,7 @@ class StackError(ScriptError):
     message = 'Not enouth elements on the stack.'
 
 
-class InvalidOpCode(ScriptError):
+class BadOpCode(ScriptError):
     message = 'The specified op code has been removed.'
 
 

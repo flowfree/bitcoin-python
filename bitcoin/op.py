@@ -2,7 +2,7 @@ import hashlib
 
 from .ecc import S256Point, Signature
 from .exceptions import (
-    InvalidOpCode, InvalidTransaction, ScriptError, StackError
+    BadOpCode, InvalidTransaction, ScriptError, StackError
 )
 from .helpers import (
     decode_num, encode_num, hash160, hash256 
@@ -533,28 +533,28 @@ def op_cat():
     """
     Concatenates two strings. DISABLED
     """
-    raise InvalidOpCode
+    raise BadOpCode
 
 
 def op_substr():
     """
     Returns a section of a string. DISABLED
     """
-    raise InvalidOpCode
+    raise BadOpCode
 
 
 def op_left():
     """
     Keeps only characters left of the specified point in a string. DISABLED
     """
-    raise InvalidOpCode
+    raise BadOpCode
 
 
 def op_right():
     """
     Keeps only characters right of the specified point in a string. DISABLED
     """
-    raise InvalidOpCode
+    raise BadOpCode
 
 
 def op_size():
@@ -573,28 +573,28 @@ def op_invert():
     """
     Flips all of the bits in the input. DISABLED
     """
-    raise InvalidOpCode
+    raise BadOpCode
 
 
 def op_and():
     """
     Boolean and between each bit in the inputs. DISABLED
     """
-    raise InvalidOpCode
+    raise BadOpCode
 
 
 def op_or():
     """
     Boolean or between each bit in the inputs. DISABLED
     """
-    raise InvalidOpCode
+    raise BadOpCode
 
 
 def op_xor():
     """	
     Boolean exclusive or between each bit in the inputs. DISABLED
     """
-    raise InvalidOpCode
+    raise BadOpCode
 
 
 def op_equal(**kwargs):
@@ -652,14 +652,14 @@ def op_2mul(**kwargs):
     """
     DISABLED
     """
-    raise InvalidOpCode
+    raise BadOpCode
 
 
 def op_2div(**kwargs):
     """
     DISABLED
     """
-    raise InvalidOpCode
+    raise BadOpCode
 
 
 def op_negate(**kwargs):
@@ -744,35 +744,35 @@ def op_mul(**kwargs):
     """
     DISABLED
     """
-    raise InvalidOpCode
+    raise BadOpCode
 
 
 def op_div(**kwargs):
     """
     DISABLED
     """
-    raise InvalidOpCode
+    raise BadOpCode
 
 
 def op_mod(**kwargs):
     """
     DISABLED
     """
-    raise InvalidOpCode
+    raise BadOpCode
 
 
 def op_lshift(**kwargs):
     """
     DISABLED
     """
-    raise InvalidOpCode
+    raise BadOpCode
 
 
 def op_rshift(**kwargs):
     """
     DISABLED
     """
-    raise InvalidOpCode
+    raise BadOpCode
 
 
 def op_booland(**kwargs):
