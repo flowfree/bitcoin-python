@@ -2,7 +2,10 @@ from io import BytesIO
 from random import randint 
 
 from .exceptions import BadSignature
-from .helpers import hash160, encode_base58_checksum
+from .helpers import (
+    encode_base58_checksum, hash160, hash256,
+    little_endian_to_int,
+)
 
 
 class FieldElement(object):
@@ -346,3 +349,12 @@ class PrivateKey(object):
         else:
             suffix = b''
         return encode_base58_checksum(prefix + secret_bytes + suffix)
+
+    @staticmethod
+    def from_phrase(phrase):
+        """
+        Compute the secret from the given phrase, and return a new PrivateKey
+        object with the obtained secret.
+        """
+        secret = little_endian_to_int(hash256(phrase.encode('utf-8')))
+        return PrivateKey(secret)
