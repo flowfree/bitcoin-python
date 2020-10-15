@@ -44,3 +44,26 @@ def test_evaluate():
     script = Script(cmds=script_sig) + Script(cmds=script_pubkey)
 
     assert script.evaluate(z=None) == True
+
+
+def test_string_representation():
+    script = Script([
+        OP_DUP,
+        OP_HASH160,
+        '1234567890',
+        OP_EQUALVERIFY,
+        OP_CHECKSIG,
+    ])
+
+    assert str(script) == 'OP_DUP OP_HASH160 1234567890 ' \
+                          'OP_EQUALVERIFY OP_CHECKSIG'
+
+    script = Script([
+        OP_5,
+        OP_2,
+        OP_ADD,
+        OP_7,
+        OP_EQUAL,
+    ])
+
+    assert str(script) == 'OP_5 OP_2 OP_ADD OP_7 OP_EQUAL'
