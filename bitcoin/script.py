@@ -21,7 +21,7 @@ class Script(object):
             if type(cmd) == int:
                 s += f' {OP_CODE_FUNCTIONS[cmd].__name__.upper()}'
             else:
-                s += f' {cmd}'
+                s += f' {cmd.hex()}'
         return s.strip()
 
     def __add__(self, other):

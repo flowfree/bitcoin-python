@@ -50,7 +50,7 @@ def test_string_representation():
     script = Script([
         OP_DUP,
         OP_HASH160,
-        '1234567890',
+        bytes.fromhex('1234567890'),
         OP_EQUALVERIFY,
         OP_CHECKSIG,
     ])
