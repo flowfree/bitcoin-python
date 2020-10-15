@@ -212,12 +212,12 @@ class TxFetcher:
     @staticmethod
     def fetch(tx_id, testnet=False, fresh=False):
         if testnet:
-            base_url = 'http://testnet.programmingbitcoin.com'
+            base_url = 'https://blockstream.info/testnet/api'
         else:
-            base_url = 'http://mainnet.programmingbitcoin.com'
+            base_url = 'https://blockstream.info/api'
 
         if fresh or (tx_id not in TxFetcher.cache):
-            url = f'{base_url}/tx/{tx_id}.hex'
+            url = f'{base_url}/tx/{tx_id}/hex'
             response = requests.get(url)
             try:
                 raw = bytes.fromhex(response.text.strip())
