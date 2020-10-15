@@ -17,6 +17,15 @@ def test_encode_base58():
         assert helpers.encode_base58(b) == expected
 
 
+def test_decode_base58():
+    addr = 'mnrVtF8DWjMu839VW3rBfgYaAfKk8983Xf'
+    h160 = helpers.decode_base58(addr).hex()
+    want = '507b27411ccf7f16f10297de6cef3f291623eddf'
+    assert h160 == want
+    got = helpers.encode_base58_checksum(b'\x6f' + bytes.fromhex(h160))
+    assert got == addr
+
+
 def test_int_to_little_endian():
     n = helpers.int_to_little_endian(500, 16)
     assert n.hex() == 'f4010000000000000000000000000000'
