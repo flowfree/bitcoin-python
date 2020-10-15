@@ -1,7 +1,7 @@
 import pytest 
 
 from bitcoin.exceptions import (
-    InvalidTransaction, ScriptError, StackError
+    BadOpCode, InvalidTransaction, ScriptError, StackError
 )
 from bitcoin.helpers import (
     decode_num, encode_num, hash160, hash256, 
@@ -603,12 +603,12 @@ def test_op_1sub():
 
 
 def test_op_2mul():
-    with pytest.raises(InvalidOpCode):
+    with pytest.raises(BadOpCode):
         op_2mul(stack=[])
 
 
 def test_op_2div():
-    with pytest.raises(InvalidOpCode):
+    with pytest.raises(BadOpCode):
         op_2div(stack=[])
 
 
@@ -722,27 +722,27 @@ def test_op_sub():
 
 
 def test_op_mul():
-    with pytest.raises(InvalidOpCode):
+    with pytest.raises(BadOpCode):
         op_mul(stack=[])
 
 
 def test_op_div():
-    with pytest.raises(InvalidOpCode):
+    with pytest.raises(BadOpCode):
         op_div(stack=[])
 
 
 def test_op_mod():
-    with pytest.raises(InvalidOpCode):
+    with pytest.raises(BadOpCode):
         op_mod(stack=[])
 
 
 def test_op_lshift():
-    with pytest.raises(InvalidOpCode):
+    with pytest.raises(BadOpCode):
         op_lshift(stack=[])
 
 
 def test_op_rshift():
-    with pytest.raises(InvalidOpCode):
+    with pytest.raises(BadOpCode):
         op_rshift(stack=[])
 
 

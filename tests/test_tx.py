@@ -62,7 +62,7 @@ class TestTx:
 
         responses.add(
             responses.GET,
-            f'http://mainnet.programmingbitcoin.com/tx/{prev_tx_id}.hex',
+            f'https://blockstream.info/api/tx/{prev_tx_id}/hex',
             body=load_raw_tx(f'{prev_tx_id}.txt'),
             status=200,
         )
@@ -76,7 +76,7 @@ class TestTx:
 
         responses.add(
             responses.GET,
-            f'http://mainnet.programmingbitcoin.com/tx/{prev_tx_id}.hex',
+            f'https://blockstream.info/api/tx/{prev_tx_id}/hex',
             body=load_raw_tx(f'{prev_tx_id}.txt'),
             status=200,
         )
@@ -92,7 +92,7 @@ class TestTx:
 
         responses.add(
             responses.GET,
-            f'http://mainnet.programmingbitcoin.com/tx/{prev_tx_id}.hex',
+            f'https://blockstream.info/api/tx/{prev_tx_id}/hex',
             body=load_raw_tx(f'{prev_tx_id}.txt'),
             status=200,
         )

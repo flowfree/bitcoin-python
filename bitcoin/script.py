@@ -15,6 +15,15 @@ class Script(object):
         else:
             self.cmds = cmds
 
+    def __str__(self):
+        s = ''
+        for cmd in self.cmds:
+            if type(cmd) == int:
+                s += f' {OP_CODE_FUNCTIONS[cmd].__name__.upper()}'
+            else:
+                s += f' {cmd.hex()}'
+        return s.strip()
+
     def __add__(self, other):
         return Script(self.cmds + other.cmds)
 
@@ -95,3 +104,7 @@ class Script(object):
             raise ScriptError
 
         return True
+
+
+def p2pkh_script(h160):
+    return Script([OP_DUP, OP_HASH160, h160, OP_EQUALVERIFY, OP_CHECKSIG])

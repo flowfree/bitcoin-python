@@ -119,6 +119,14 @@ class Tx(object):
             h256 = hash256(sig)
             return int.from_bytes(h256, 'big')
 
+    def sign_input(self, input_index, private_key):
+        z = self.sig_hash(input_index)
+        der = private_key.sign(z).der()
+        sig = der + SIGHASH_ALL.to_bytes(1, 'big')            
+        sec = private_key.point.sec()
+        script_sig = Script([sig, sec])
+        self.tx_ins[input_index].script_sig = script_sig
+
     def verify_input(self, input_index):
         tx_in = self.tx_ins[input_index]
         script_pubkey = tx_in.script_pubkey(testnet=self.testnet)
@@ -212,12 +220,12 @@ class TxFetcher:
     @staticmethod
     def fetch(tx_id, testnet=False, fresh=False):
         if testnet:
-            base_url = 'http://testnet.programmingbitcoin.com'
+            base_url = 'https://blockstream.info/testnet/api'
         else:
-            base_url = 'http://mainnet.programmingbitcoin.com'
+            base_url = 'https://blockstream.info/api'
 
         if fresh or (tx_id not in TxFetcher.cache):
-            url = f'{base_url}/tx/{tx_id}.hex'
+            url = f'{base_url}/tx/{tx_id}/hex'
             response = requests.get(url)
             try:
                 raw = bytes.fromhex(response.text.strip())
