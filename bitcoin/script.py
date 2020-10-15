@@ -95,3 +95,7 @@ class Script(object):
             raise ScriptError
 
         return True
+
+
+def p2pkh_script(h160):
+    return Script([OP_DUP, OP_HASH160, h160, OP_EQUALVERIFY, OP_CHECKSIG])
